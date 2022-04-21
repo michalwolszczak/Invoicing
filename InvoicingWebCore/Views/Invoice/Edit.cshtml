@@ -1,0 +1,106 @@
+﻿@model InvoiceToView
+
+<form method="post">
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary">Edytuj fakturę</h2>
+            <hr/>
+        </div>
+        <div class="row mb-3" >
+            <div class="col-3">
+                <label for="string">Typ faktury</label>
+                @if(Model is not null)
+                {
+                    <select asp-for="InvoiceType.Id" class="form-select" id="invoiceType" name="invoiceType">
+                        @foreach(var contr in Model.InvoiceTypes)
+                        {
+                            if(contr.Name == @Model.InvoiceType.Name)
+                            {
+                                <option selected="selected">@contr.Name</option>
+                            }else
+                            {
+                                <option>@contr.Name</option> 
+                            }
+                              
+                        }
+                    </select>                    
+                }else{ <input disabled class="form-control"/>}
+            </div>
+
+            <div class="col-5">
+                <label asp-for="Invoice.Contractor.Name">Kontrahent</label>
+                <input disabled asp-for="Invoice.Contractor.Name" class="form-control"/>
+@*                <select asp-for="Invoice.Contractor" class="form-select" id="contractor" name="contractor">
+                    @foreach(var contr in Model.Contractors)
+                    {
+                        <option>@contr.Name</option>   
+                    }
+                  </select>
+*@                             
+            </div>   
+            
+            <div class="col-3">
+                <label asp-for="Invoice.SaleDate">Data realizacji</label>
+                <input asp-for="Invoice.SaleDate" class="form-control" />
+            </div>
+            <div class="col-1">
+                <label asp-for="Invoice.Tax">VAT [%]</label>
+                <input asp-for="Invoice.Tax" class="form-control" />
+                <span asp-validation-for="Invoice.Tax" class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-12 table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nazwa produktu</th>
+                            <th scope="col">Cena netto</th>
+                            <th scope="col">Cena brutto</th>
+                            <th scope="col">VAT [%]</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var obj in Model.Products)
+                        {
+                            <tr>
+                                <td>
+                                    @obj.Name
+                                </td>
+                                 <td>
+                                    @obj.NetPrice
+                                </td>
+                                <td>
+                                    @obj.GrossPrice
+                                </td>
+                                <td>
+                                    @obj.Tax
+                                </td>
+                                <td>
+                                    <div class="w-75 btn-group" role="group">
+                                        <a asp-controller="Invoice" asp-action="DeleteProduct" asp-route-id="@obj.Id" asp-route-invoiceId="@Model.Invoice.Id" style="width:60px" class="btn btn-danger mx-0"><i class="bi bi-pencil-square"></i>Usuń</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <a asp-controller="Invoice" asp-action="AddProductToInvoice" asp-route-id="@Model.Invoice.Id" class="btn btn-secondary" style="width:200px">Dodaj produkt do faktury</a>
+        <br />
+        <br />
+        <br />
+
+        <button type="submit" class="btn btn-primary" style="width:180px">Zaktualizuj fakturę</button>
+        <a asp-controller="Invoice" asp-action="Index" class="btn btn-secondary" style="width:180px">Wróć do listy faktur</a>
+    </div>
+</form>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}

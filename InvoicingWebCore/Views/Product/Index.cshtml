@@ -1,0 +1,64 @@
+﻿    @model IEnumerable<Product>
+
+<div class="container p-3">
+        <div class="row pt-4">
+            <div class="col-6">
+                <h1>Produkty</h1>
+            </div>
+			<div class="col-6 text-end">
+                <a asp-controller="Product" asp-action="Create" class="btn btn-primary">
+                    <i class="bia bi-file-plus"></i> &nbsp; Dodaj nowy produkt
+                </a>
+            </div>           
+        </div>
+		
+        <div class="row mb-5">
+            <div class="col-md-12 table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th scope="col">Nazwa produktu</th>
+                            <th scope="col">Cena netto</th>
+                            <th scope="col">Cena brutto</th>
+                            <th scope="col">VAT [%]</th>
+                            <th scope="col">Opis</th>  
+                            <th scope="col"></th>  
+                            <th scope="col"></th> 
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var obj in Model)
+                        {
+                            <tr>
+                                <td>
+                                    @obj.Name
+                                </td>
+                                 <td>
+                                    @obj.NetPrice
+                                </td>
+                                <td>
+                                    @obj.GrossPrice
+                                </td>
+                                <td>
+                                    @obj.Tax
+                                </td>
+                                <td>
+                                    @obj.Description
+                                </td>     
+                                <td>
+                                    <div class="w-75 btn-group" role="group">
+                                        <a asp-controller="Product" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-0"><i class="bi bi-pencil-square"></i>Edytuj</a>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="w-75 btn-group" role="group">
+                                        <a asp-controller="Product" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-0"><i class="bi bi-trash"></i>Usuń</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+</div>

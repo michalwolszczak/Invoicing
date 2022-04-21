@@ -1,0 +1,42 @@
+﻿@model Product
+
+<form method="post">
+    <div class="border p-3 mt-4">
+        <div class="row pb-2">
+            <h2 class="text-primary">Dodaj produkt</h2>
+            <hr/>
+        </div>
+        <div class="mb-3">
+            <label asp-for="Name">Nazwa produktu</label>
+            <input asp-for="Name" class="form-control" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="NetPrice">Cena netto</label>
+            <input asp-for="NetPrice" class="form-control" />
+            <span asp-validation-for="NetPrice" class="text-danger"></span>
+        </div>
+        <div class="mb-3">
+            <label asp-for="GrossPrice">Cena brutto</label>
+            <input asp-for="GrossPrice" class="form-control" />
+        </div>
+        <div class="mb-3">
+            <label asp-for="Tax">VAT [%]</label>
+            <input asp-for="Tax" class="form-control" />
+            <span asp-validation-for="Tax" class="text-danger"></span>
+        </div>        
+        <div class="mb-3">
+            <label asp-for="Description">Opis</label>
+            <input asp-for="Description" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:150px">Dodaj nowy produkt</button>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-secondary" style="width:150px">Wróc do listy produktów</a>
+    </div>
+</form>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+}
