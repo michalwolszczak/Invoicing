@@ -2,6 +2,8 @@
 using InvoicingWebCore.Models;
 using InvoicingWebCore.ViewModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Text.Json;
 
 namespace InvoicingWebCore.Controllers
 {
@@ -19,40 +21,94 @@ namespace InvoicingWebCore.Controllers
             return View(objInvoiceList);
         }
 
+        public IActionResult GetProducts()
+        {
+            var products = _db.Products.ToList<Product>;
+            var test = Json(products);
+            return Json(products);           
+        }
+
         //get
         public IActionResult Create()
         {
-            InvoiceToView obj = new InvoiceToView();
-            obj.Contractors = _db.Contractors.ToList();
-            obj.InvoiceTypes = _db.InvoiceTypes.ToList();             
-            return RedirectToAction("Select", "Contractor", obj.Contractors);
+            //InvoiceToView obj = new InvoiceToView();
+            //obj.Contractors = _db.Contractors.ToList();
+            //obj.InvoiceTypes = _db.InvoiceTypes.ToList();             
+            //return RedirectToAction("Select", "Contractor", obj.Contractors);
+            InvoiceView model = new InvoiceView();
+
+            model.ProductsList = _db.Products.ToList();
+            model.ContractorsList = _db.Contractors.ToList();
+            model.InvoiceTypeList = _db.InvoiceTypes.ToList();            
+
+            ViewBag.InvoiceTypeList = new SelectList(model.InvoiceTypeList, "Id", "Name");
+            ViewBag.ContractorsList = new SelectList(model.ContractorsList, "Id", "Name");
+            ViewBag.ProductsList = JsonSerializer.Serialize(model.ProductsList);
+
+            return View(model);
         }
 
-        //get with contractor ID
-        [HttpGet("Create/{id}")]
-        public IActionResult Create([FromRoute(Name = "id")] int contractorId)
+        //post
+        [HttpPost]
+        public IActionResult Create(InvoiceView model)
         {
-            if (contractorId == null || contractorId == 0)
-            {
-                return NotFound();
-            }
+            string test = Request.Form["productsList0"];
 
-            InvoiceToView obj = new InvoiceToView();
-            obj.InvoiceTypes = _db.InvoiceTypes.ToList();
-            Contractor contractor = _db.Contractors.Find(contractorId);
+            return View(model);
+            //if (contractorId == null || contractorId == 0)
+            //{
+            //    return NotFound();
+            //}
 
-            if (contractor == null)
-            {
-                return NotFound();
-            }
-            //obj.Contractor = contractor;
+            //InvoiceToView obj = new InvoiceToView();
+            //obj.InvoiceTypes = _db.InvoiceTypes.ToList();
+            //Contractor contractor = _db.Contractors.Find(contractorId);
 
-            obj.Invoice = new Invoice();
-            obj.Invoice.ContractorId = contractor.Id;
-            obj.Invoice.Contractor = contractor;
-            obj.Invoice.SaleDate = DateTime.Now;
-            obj.Invoice.CreateDate = DateTime.Now;
-            return View(obj);
+            //if (contractor == null)
+            //{
+            //    return NotFound();
+            //}
+            ////obj.Contractor = contractor;
+
+            //obj.Invoice = new Invoice();
+            //obj.Invoice.ContractorId = contractor.Id;
+            //obj.Invoice.Contractor = contractor;
+            //obj.Invoice.SaleDate = DateTime.Now;
+            //obj.Invoice.CreateDate = DateTime.Now;
+
+            //if(model == null)
+            //{
+            //    return NotFound();
+            //}
+
+
+            //if (!ModelState.IsValid)
+            //{
+            //    ///ToDo
+            //    model.Invoice.Number = "1/11";
+            //    if (model.Invoice.Contractor != null)
+            //    {
+            //        model.Invoice.ContractorId = model.Invoice.Contractor.Id;
+            //    }
+            //    if (model.Invoice.InvoiceType != null)
+            //    {
+            //        model.Invoice.InvoiceTypeId = model.Invoice.InvoiceType.Id;
+            //    }            
+            //    model.Invoice.Contractor = null;
+            //    model.Invoice.InvoiceType = null;
+
+            //    _db.Invoices.Add(model.Invoice);
+            //    _db.SaveChanges();
+
+            //    model.Invoice.Id = _db.Invoices.OrderBy(x => x.Id).Last().Id;
+
+            //    _db.ProductsInvoices.Add(new ProductInvoice(){InvoiceId = model.Invoice.Id, ProductId = model.ProductInvoice.Id });
+            //    _db.SaveChanges();
+
+            //    return RedirectToAction("Index");
+            //}           
+
+            //return View(model);
         }
 
         //post
@@ -71,7 +127,7 @@ namespace InvoicingWebCore.Controllers
 
             if (!ModelState.IsValid)
             {
-                obj.Invoice.TypeId = objtype.Id;
+                obj.Invoice.InvoiceTypeId = objtype.Id;
                 obj.Invoice.Contractor = contractor;
                 obj.Invoice.ContractorId = contractor.Id;
 
@@ -102,7 +158,7 @@ namespace InvoicingWebCore.Controllers
             InvoiceToView obj = new InvoiceToView();
             obj.Invoice = invoice;
 
-            InvoiceType invoiceType = _db.InvoiceTypes.Single(x => x.Id == invoice.TypeId);
+            InvoiceType invoiceType = _db.InvoiceTypes.Single(x => x.Id == invoice.InvoiceTypeId);
 
             if (invoiceType == null)
             {
@@ -233,6 +289,7 @@ namespace InvoicingWebCore.Controllers
             obj.InvoiceId = invoiceId;
 
             _db.ProductsInvoices.Add(obj);
+            
             _db.SaveChanges();
 
             return RedirectToAction("Edit", new { id = invoiceId });

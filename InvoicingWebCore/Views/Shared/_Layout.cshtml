@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css" />
 </head>
-<body>
+<body class="min-vh-100">
     <header>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
           <div class="container-fluid">
@@ -42,8 +42,8 @@
         </main>
     </div>
 
-    <footer class="footer text-muted bg-dark">
-        <div class="container ">
+    <footer class="position-absolute text-muted d-flex align-items-center bg-dark" style="height:40px; bottom: 0; width: 100%">
+        <div class="container text-center">
             &copy; 2022 - System fakturowania - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>

@@ -166,6 +166,9 @@ namespace InvoicingWebCore.Migrations
                     b.Property<DateTime>("CreateDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("InvoiceTypeId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -176,12 +179,11 @@ namespace InvoicingWebCore.Migrations
                     b.Property<int>("Tax")
                         .HasColumnType("int");
 
-                    b.Property<int>("TypeId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ContractorId");
+
+                    b.HasIndex("InvoiceTypeId");
 
                     b.ToTable("Invoices");
                 });
@@ -323,7 +325,15 @@ namespace InvoicingWebCore.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("InvoicingWebCore.Models.InvoiceType", "InvoiceType")
+                        .WithMany()
+                        .HasForeignKey("InvoiceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Contractor");
+
+                    b.Navigation("InvoiceType");
                 });
 
             modelBuilder.Entity("InvoicingWebCore.Models.Contractor", b =>

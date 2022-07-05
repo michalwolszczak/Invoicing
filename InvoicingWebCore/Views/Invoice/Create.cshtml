@@ -1,4 +1,8 @@
-﻿@model InvoiceToView
+﻿const { data } = require("jquery");
+
+@using InvoicingWebCore.ViewModel
+
+@model InvoiceView
 
 <form method="post">
     <div class="border p-3 mt-4">
@@ -7,26 +11,29 @@
             <hr/>
         </div>
 
-        <div class="row mb-3" >
+        <div class="row mb-3">
+            <div class="col-8">
+                <input class="form-control form-control-sm"/> 
+            </div>
+            <div class="col-8">
+                <input class="form-control form-control-sm"/>
+            </div>
+        </div>
+
+        
+        <div class="row mb-3" id="myDropdown" >
             <div class="col-3">
-                <label for="string">Typ faktury</label>
-                @if(Model is not null)
-                {
-                    <select asp-for="Invoice.TypeId" class="form-select" id="invoiceType" name="invoiceType">
-                        @foreach(var contr in Model.InvoiceTypes)
-                        {
-                            <option>@contr.Name</option>   
-                        }
-                    </select>                    
-                }else{ <input disabled class="form-control"/>}
+                <a href="#" id="filldetails" onclick="Test()">Add</a>
+                <label asp-for="Invoice.InvoiceType.Name">Typ faktury</label>
+                <select asp-for="Invoice.InvoiceType.Id" class="form-select" id="invoiceTypeList" asp-items="@ViewBag.InvoiceTypeList"></select>                    
             </div>
 
-            <div class="col-8">
+            <div class="col-4">
                 <label asp-for="Invoice.Contractor.Name">Kontrahent</label>
-                <input disabled asp-for="Invoice.Contractor.Name" class="form-select"/>               
-@*              <a asp-controller="Contractor" asp-action="Select" class="btn btn-primary" style="width:200px">Dodaj kontrahenta</a>
-*@            </div>   
+                <select class="js-example-basic-single js-states form-control" id="contractorsList" asp-for="Invoice.Contractor.Id"  asp-items="@ViewBag.ContractorsList"></select>
+            </div>   
             
+
             <div class="col-3">
                 <label asp-for="Invoice.SaleDate">Data realizacji</label>
                 <input asp-for="Invoice.SaleDate" class="form-control" />
@@ -38,7 +45,7 @@
             </div>
         </div>
 
-        <button asp-route="Invoice.Contractor.Id" type="submit" class="btn btn-primary" style="width:150px" aps->Dodaj fakturę</button>
+        <button type="submit" class="btn btn-primary" style="width:150px" aps->Dodaj fakturę</button>
         <a asp-controller="Invoice" asp-action="Index" class="btn btn-secondary" style="width:200px">Wróć do listy faktur</a>
     </div>
 </form>
@@ -46,5 +53,69 @@
 @section Scripts{
     @{
         <partial name="_ValidationScriptsPartial" />
+
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+        <script type="text/javascript">
+            function Test(){
+                document.body.appendChild(document.createTextNode("test"));
+                $.ajax({
+                    url: "/Invoice/GetProducts",
+                    type: "GET",
+                    dataType: "json",
+                    success: OnSuccess,
+                });
+            };
+
+            function OnSuccess(response){
+                $(response).each(function(index, product){
+                    document.body.appendChild(document.createTextNode(product.Name));
+                });
+            };
+
+        </script>
+
+        <script type="text/javascript">
+            var i = 0;
+
+            (function(){
+                $("#contractorsList").select2({theme: "classic"});
+            })();
+
+            function AddSelect(idName){
+                $("#"+ idName).select2({placeholder: "Wyszukaj produkt", allowClear: true});
+                document.body.appendChild(document.createTextNode(idName));
+            };
+
+            function AddNewProductInput(){
+
+                var idName = "productsList" + i;
+                var html = `
+                      <div id="container${i}" class="col-4">
+                        <label for="text">Produkty</label>
+                        <select class="js-example-placeholder-single js-states form-control" id="${idName}" asp-for="ProductInvoice.Id"></select>
+                      </div>
+                    `;
+                var div = document.getElementById("myDropdown");
+                div.insertAdjacentHTML('afterend', html);
+                
+                var list = @Html.Raw(ViewBag.ProductsList);
+
+                var select = document.getElementById(idName);
+                var firstOption = document.createElement('option');
+                select.appendChild(firstOption);
+
+                AddSelect(idName);
+                i++;
+
+                for(var k = 0; k<=list.length; k++){
+                    var opt = document.createElement('option');
+                    opt.value = list[k].Id;
+                    opt.innerHTML = list[k].Name;
+                    select.appendChild(opt);
+                }
+            }
+        </script>
     }
 }

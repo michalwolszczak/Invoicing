@@ -7,7 +7,8 @@ namespace InvoicingWebCore.Models
         [Key]
         public int Id { get; set; }
         [Required]
-        public int TypeId { get; set; }
+        public int InvoiceTypeId { get; set; }
+        public InvoiceType InvoiceType { get; set; }
         public int ContractorId { get; set; }
         public Contractor Contractor { get; set; }
         [Required]
