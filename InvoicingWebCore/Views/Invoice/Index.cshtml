@@ -3,11 +3,11 @@
 <div class="container p-3">
         <div class="row pt-4">
             <div class="col-6">
-                <h1>Faktury</h1>
+                <h1>Invoices</h1>
             </div>
 			<div class="col-6 text-end">
                 <a asp-controller="Invoice" asp-action="Create" class="btn btn-primary">
-                    <i class="bi bi-file-plus"></i> &nbsp; Dodaj nową fakturę
+                    <i class="bi bi-file-plus"></i> &nbsp; Create new invoice
                 </a>
             </div>           
         </div>
@@ -17,11 +17,10 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th scope="col">Numer faktury</th>
-                            <th scope="col">Typ faktury</th>
-                            <th scope="col">Data wystawienia</th>
-                            <th scope="col">Data realizacji</th>
-                            <th scope="col">VAT [%]</th>
+                            <th scope="col">No.</th>
+                            <th scope="col">Invoice type</th>
+                            <th scope="col">Creation date</th>
+                            <th scope="col">Sale date</th>
                             <th scope="col"></th>  
                             <th scope="col"></th> 
                         </tr>
@@ -37,22 +36,19 @@
                                     @obj.InvoiceTypeId
                                 </td>
                                 <td>
-                                    @obj.CreateDate
+                                    @obj.CreationDate
                                 </td>
                                 <td>
                                     @obj.SaleDate
                                 </td>
                                 <td>
-                                    @obj.Tax
-                                </td>                                
-                                <td>
                                     <div class="w-75 btn-group" role="group">
-                                        <a asp-controller="Invoice" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-0"><i class="bi bi-pencil-square"></i>Edytuj</a>
+                                        <a asp-controller="Invoice" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-0"><i class="bi bi-pencil-square"></i>Edit</a>
                                     </div>
                                 </td>                               
                                 <td>
                                     <div class="w-75 btn-group" role="group">
-                                        <a asp-controller="Invoice" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-0"><i class="bi bi-trash"></i>Usuń</a>
+                                        <a asp-controller="Invoice" asp-action="Delete" asp-route-id="@obj.Id" class="btn btn-danger mx-0"><i class="bi bi-trash"></i>Delete</a>
                                     </div>
 
                                 </td>

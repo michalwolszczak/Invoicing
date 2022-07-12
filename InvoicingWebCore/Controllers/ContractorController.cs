@@ -1,7 +1,9 @@
 ﻿using InvoicingWebCore.Data;
 using InvoicingWebCore.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace InvoicingWebCore.Controllers
 {
@@ -16,12 +18,10 @@ namespace InvoicingWebCore.Controllers
 
         public IActionResult Index()
         {
-            IEnumerable<Contractor> contractors = _db.Contractors.ToList();            
-            return View(contractors);
-        }
-        public IActionResult Select()
-        {
-            IEnumerable<Contractor> contractors = _db.Contractors.ToList();
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = _db.Users.Include(c => c.Company).FirstOrDefault(x => x.Id == userId);
+
+            IEnumerable<Contractor> contractors = _db.Contractors.Where(x => x.Company == user.Company).ToList();            
             return View(contractors);
         }
 
@@ -33,16 +33,26 @@ namespace InvoicingWebCore.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Contractor obj)
+        public IActionResult Create(Contractor contractor)
         {
-            if (ModelState.IsValid)
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = _db.Users.Include(c => c.Company).FirstOrDefault(x => x.Id == userId);
+            if(user != null)
             {
-                _db.Contractors.Add(obj);
-                _db.SaveChanges();
-                TempData["success"] = "Kontrahent został dodany";
-                return RedirectToAction("Index");
+                ModelState.Remove("Company");
+                ModelState.Remove("CompanyId");
+                if (ModelState.IsValid)
+                {
+                    contractor.Company = user.Company;
+                    _db.Contractors.Add(contractor);
+                    _db.SaveChanges();
+
+                    TempData["success"] = "A new contractor has been added";
+                    return RedirectToAction("Index");
+                }
             }
-            return View(obj);
+            TempData["error"] = "The user in not logged in";
+            return RedirectToAction("Login", "Account");
         }
 
         //get
@@ -90,29 +100,9 @@ namespace InvoicingWebCore.Controllers
                 return NotFound();
             }
 
-            return View(contractor);
-        }
-
-        //post
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeletePOST(int? id)
-        {
-            if (id == null || id == 0)
-            {
-                return NotFound();
-            }
-
-            Contractor contractor = _db.Contractors.Find(id);
-
-            if (contractor == null)
-            {
-                return NotFound();
-            }
-
             _db.Contractors.Remove(contractor);
             _db.SaveChanges();
-            TempData["success"] = "Kontrahent został usunięty";
+            TempData["success"] = "Contractor has been deleted";
             return RedirectToAction("Index");
         }
     }

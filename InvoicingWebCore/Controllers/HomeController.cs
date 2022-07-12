@@ -1,20 +1,26 @@
-﻿using InvoicingWebCore.Models;
+﻿using InvoicingWebCore.Data;
+using InvoicingWebCore.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
+using System.Security.Claims;
 
 namespace InvoicingWebCore.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ApplicationDbContext _db;
+        public HomeController(ILogger<HomeController> logger, ApplicationDbContext db)
         {
             _logger = logger;
+            _db = db;
         }
 
         public IActionResult Index()
         {
+            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            //var user = _db.Users.Find(userId);
+
             return View();
         }
 

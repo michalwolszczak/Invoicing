@@ -1,121 +1,438 @@
-﻿const { data } = require("jquery");
+﻿@using InvoicingWebCore.ViewModel
 
-@using InvoicingWebCore.ViewModel
+@model Invoice
 
-@model InvoiceView
-
-<form method="post">
-    <div class="border p-3 mt-4">
-        <div class="row pb-2">
-            <h2 class="text-primary">Dodaj fakturę</h2>
-            <hr/>
-        </div>
-
-        <div class="row mb-3">
-            <div class="col-8">
-                <input class="form-control form-control-sm"/> 
+<div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+        <div class="border p-3 mt-3">
+            <div class="row pb-1">
+                <h2 class="text-primary">Create invoice</h2>
+                <hr/>
             </div>
-            <div class="col-8">
-                <input class="form-control form-control-sm"/>
-            </div>
-        </div>
-
         
-        <div class="row mb-3" id="myDropdown" >
-            <div class="col-3">
-                <a href="#" id="filldetails" onclick="Test()">Add</a>
-                <label asp-for="Invoice.InvoiceType.Name">Typ faktury</label>
-                <select asp-for="Invoice.InvoiceType.Id" class="form-select" id="invoiceTypeList" asp-items="@ViewBag.InvoiceTypeList"></select>                    
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label asp-for="InvoiceType.Name" class="fw-bold">Invoice type</label>
+                    <select asp-for="InvoiceType.Id" class="form-select" id="invoiceTypeId" asp-items="@ViewBag.InvoiceTypeList"></select>                    
+                </div>
+
+                <div class="col-3">
+                    <label asp-for="Number" class="fw-bold">No.</label>
+                    <input disabled id="invoiceNumber" asp-for="Number" class="form-control" value="@ViewData["InvoiceNumber"]" />
+                </div>     
+
+                <div class="col-3">
+                    <label asp-for="SaleDate" class="fw-bold"></label>
+                    <input id="saleDate" asp-for="SaleDate" class="form-control" />
+                    <span asp-validation-for="SaleDate" class="text-danger"></span>
+                </div>
+
+                <div class="col-3">
+                    <label asp-for="CreationDate" class="fw-bold"></label>
+                    <input id="creationDate" asp-for="CreationDate" class="form-control" />
+                    <span asp-validation-for="CreationDate" class="text-danger"></span>
+                </div>
             </div>
 
-            <div class="col-4">
-                <label asp-for="Invoice.Contractor.Name">Kontrahent</label>
-                <select class="js-example-basic-single js-states form-control" id="contractorsList" asp-for="Invoice.Contractor.Id"  asp-items="@ViewBag.ContractorsList"></select>
-            </div>   
-            
+            <div class="row">
+                <div class="col-6 text-start border-end border-secondary">
+                    <h4>Seller</h4>
 
-            <div class="col-3">
-                <label asp-for="Invoice.SaleDate">Data realizacji</label>
-                <input asp-for="Invoice.SaleDate" class="form-control" />
+                    <div class="row text-primary">
+                        <h4>General</h4>
+                    </div>
+
+                    <div class="px-3">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Company name</label>
+                                <input disabled value="@ViewBag.Company.Name" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="fw-bold">First name</label>
+                                <input disabled value="@ViewBag.Company.FirstName" class="form-control" />
+                            </div>
+                            <div class="col-6">
+                                <label class="fw-bold">Last name</label>
+                                <input disabled value="@ViewBag.Company.LastName" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label class="fw-bold">NIP</label>
+                                <input disabled value="@ViewBag.Company.NIP" class="form-control"/>
+                            </div>
+                            <div class="col-4">
+                                <label class="fw-bold">KRS</label>
+                                <input disabled value="@ViewBag.Company.KRS" class="form-control"/>
+                            </div>
+                            <div class="col-4">
+                                <label class="fw-bold">Regon</label>
+                                <input disabled value="@ViewBag.Company.Regon" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row text-primary">
+                        <h4>Contact</h4>
+                    </div>
+
+                    <div class="px-3">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Address Line1</label>
+                                <input disabled value="@ViewBag.Company.AddressLine1" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Address Line2</label>
+                                <input disabled value="@ViewBag.Company.AddressLine2" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-9">
+                                <label class="fw-bold">City</label>
+                                <input disabled value="@ViewBag.Company.City" class="form-control" />
+                            </div>
+                            <div class="col-3">
+                                <label class="fw-bold">Postal code</label>
+                                <input disabled value="@ViewBag.Company.PostalCode" class="form-control" />                
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-9">
+                                <label class="fw-bold">Province</label>
+                                <input disabled value="@ViewBag.Company.Province" class="form-control" />
+                            </div>
+                            <div class="col-3">
+                                <label class="fw-bold">Country</label>
+                                <input disabled value="@ViewBag.Company.Country" class="form-control" />
+                            </div>
+                        </div>
+                    </div>                              
+                </div>
+                <div class="col-6 text-start">
+                    <h4>Buyer</h4>
+                     
+                    <div class="row text-primary">
+                        <h4>General</h4>
+                    </div>
+
+                    <div class="px-3">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Company name</label>
+                                <select onchange="UpdateBuyer()" asp-for="ContractorId" class="form-select" id="contractorId" asp-items="@ViewBag.ContractorList">
+                                     <option disabled selected="selected">Select buyer</option>
+                                 </select>    
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="fw-bold">First name</label>
+                                <input disabled id="FirstName" value="" class="form-control" />
+                            </div>
+                            <div class="col-6">
+                                <label class="fw-bold">Last name</label>
+                                <input disabled id="LastName" value="" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label class="fw-bold">NIP</label>
+                                <input disabled id="nip" value="" class="form-control"/>
+                            </div>
+                            <div class="col-4">
+                                <label class="fw-bold">KRS</label>
+                                <input disabled id="krs" value="" class="form-control"/>
+                            </div>
+                            <div class="col-4">
+                                <label class="fw-bold">Regon</label>
+                                <input disabled id="regon" value="" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row text-primary">
+                        <h4>Contact</h4>
+                    </div>
+
+                    <div class="px-3">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Address Line1</label>
+                                <input disabled id="addressLine1" value="" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Address Line2</label>
+                                <input disabled id="addressLine2" value="" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-9">
+                                <label class="fw-bold">City</label>
+                                <input disabled id="city" value="" class="form-control" ~~/>
+                            </div>
+                            <div class="col-3">
+                                <label class="fw-bold">Postal code</label>
+                                <input disabled id="postalCode" value="" class="form-control" />                
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-9">
+                                <label class="fw-bold">Province</label>
+                                <input disabled id="province" value="" class="form-control" />
+                            </div>
+                            <div class="col-3">
+                                <label class="fw-bold">Country</label>
+                                <input disabled id="country" value="" class="form-control" />
+                            </div>
+                        </div>
+                    </div>                              
+                </div>
             </div>
-            <div class="col-1">
-                <label asp-for="Invoice.Tax">VAT [%]</label>
-                <input asp-for="Invoice.Tax" class="form-control" />
-                <span asp-validation-for="Invoice.Tax" class="text-danger"></span>
+            <div class="row mb-2">
+                <h4>Invoice entries</h4>
+            </div>
+
+            <div class="row border mx-3">
+                <div class="row mt-3">
+                    <div class="col-sm-5">
+                        <label class="fw-bold">Name</label>                       
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">Quantity</label>                      
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">Quantity unit</label>                     
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">Unit net price</label>                     
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">VAT %</label>                      
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">Total net</label>                      
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">Total gross</label>                       
+                    </div>
+                    <div class="col-sm-1">
+                    </div>
+                </div>
+                <div class="row mb-3" id="productContainer">
+
+@*                    <div class="row m-0 p-0" id="row_0">
+                        <div class="col-sm-5">
+                            <select class="product w-100" id="product_-1" name="state" >
+                            </select>    
+                        </div>
+                        <div class="col-sm-1">
+                            <input id="quantity" autocomplete="off" class="form-control" />
+                        </div>
+                        <div class="col-sm-1 ">
+                            <select class="form-select">
+                                <option selected="selected"></option>
+                                <option value="1">szt</option>
+                                <option value="2">godz</option>
+                                <option value="3">dni</option>
+                            </select>    
+                        </div>
+                        <div class="col-sm-1">
+                            <input id="netPrice" autocomplete="off" class="form-control" />
+                        </div>
+                        <div class="col-sm-1">
+                            <select class="form-select">
+                                <option selected="selected"></option>
+                                <option value="1">23</option>
+                                <option value="2">8</option>
+                                <option value="3">7</option>
+                            </select>    
+                        </div>
+                        <div class="col-sm-1">
+                            <input id="totalNet" autocomplete="off" class="form-control" />
+                        </div>
+                        <div class="col-sm-1">
+                            <input id="totalGross" autocomplete="off" class="form-control" />
+                        </div>
+                        <div class="col-sm-1" style="position:relative;top: 0px">
+                            <a onclick="DeleteRow()" style="font-size: 2rem; color: red;vertical-align: top; cursor: pointer" title="Delete entry">
+						        <i class="bi bi-x-square-fill align-top"></i>
+						    </a>
+                        </div>                        
+                    </div>  *@              
+
+                </div>
+                <div class="row-cols-7 my-2">
+                    <button class="btn btn-primary" onclick="AddItem()">Add item</button>
+                </div>
+
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <button onclick="CreateInvoice()" class="btn btn-primary">Add new invoice</button>
+                    <a asp-controller="Invoice" asp-action="Index" class="btn btn-secondary">Return to list</a>
+                </div>
             </div>
         </div>
-
-        <button type="submit" class="btn btn-primary" style="width:150px" aps->Dodaj fakturę</button>
-        <a asp-controller="Invoice" asp-action="Index" class="btn btn-secondary" style="width:200px">Wróć do listy faktur</a>
     </div>
-</form>
+    <div class="col-sm-1"></div>
+</div>
 
-@section Scripts{
-    @{
-        <partial name="_ValidationScriptsPartial" />
+@section Scripts{  
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="text/javascript">  
+        var rowId = 0;
+        var productList = @Json.Serialize(ViewBag.ProductList);
+        var taxesList = @Json.Serialize(ViewBag.TaxTypes);
 
-        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>        
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
-        <script type="text/javascript">
-            function Test(){
-                document.body.appendChild(document.createTextNode("test"));
-                $.ajax({
-                    url: "/Invoice/GetProducts",
-                    type: "GET",
-                    dataType: "json",
-                    success: OnSuccess,
+        $(document).ready(function() {
+            AddItem();
+        });
+
+        function DeleteRow(id) {
+            $("#row_"+id).hide();
+        }
+
+        function EnableSelect2() {           
+            $('.product').select2({
+                theme: "bootstrap-5",
+                width: 'style',
+                tags: true
+            });
+        }
+
+        function AddItem() {
+            var productId = "product_" + rowId;
+
+            var html = '<div class="row m-0 p-0 mt-3" id="'+rowId+'"><div class="col-sm-5"><select onchange="GetProductDetail('+rowId+')" id="'+ productId +'" class="product w-100" name="state"><option selected="selected"></option></select></div><div class="col-sm-1"><input id="quantity_'+rowId+'" onchange="UpdateTotalPrice('+rowId+')" autocomplete="off" class="form-control" /></div><div class="col-sm-1 "><select class="form-select"><option selected="selected"></option><option value="1">szt</option><option value="2">godz</option><option value="3">dni</option></select></div><div class="col-sm-1"><input id="netPrice_'+rowId+'" onchange="UpdateTotalPrice('+rowId+')" autocomplete="off" class="form-control" /></div><div class="col-sm-1"><select id="tax_'+rowId+'" onchange="UpdateTotalPrice('+rowId+')" class="form-select"></select></div><div class="col-sm-1"><input id="totalNet_'+rowId+'" autocomplete="off" class="form-control" /></div><div class="col-sm-1"><input id="totalGross_'+rowId+'" autocomplete="off" class="form-control" /></div><div class="col-sm-1" ><a onclick="DeleteRow('+rowId+')" style="font-size: 2rem; color: red;vertical-align: top; cursor: pointer" title="Delete entry"><i class="bi bi-x-square-fill"></i></a></div></div>';
+            var productContainer = document.getElementById("productContainer");
+            $('#productContainer').append(html);
+            EnableSelect2();
+                       
+            $.each(JSON.parse(productList), function(i, item) {
+                var newOption = new Option(item.Name, item.Id, false, false);
+                $('#'+productId).append(newOption).trigger('change');
+            });    
+
+            $.each(JSON.parse(taxesList), function (i, item) {
+                $('#tax_'+rowId).append($('<option>', { 
+                    value: item.Tax,
+                    text : item.Tax 
+                }));
+            });
+            rowId += 1;         
+        }
+
+        function GetProductDetail(id) {
+            $("#product_"+id).on("change", function() {
+                var productId = $("#product_"+id).find(":selected").val();
+                               
+                var productList = @Json.Serialize(ViewBag.ProductList);
+                $.each(JSON.parse(productList), function(i, item) {
+                    if (productId != "") {
+                        if (item.Id == productId) {
+                            $("#netPrice_" + id).val(item.NetPrice);
+                            $("#tax_" + id).val(item.Tax);
+                            $("#quantity_" + id).val("1");
+                            UpdateTotalPrice(id);
+                        }
+                    }else{
+                        $("#netPrice_" + id).val("");
+                        $("#tax_" + id).val("");
+                    }
+                });                        
+            });             
+        }
+
+        function UpdateBuyer() {
+            
+            //var contractorElement = document.getElementById("Contractor");
+            //var contractorId = contractorElement.options[contractorElement.selectedIndex].value;
+            var contractorId = $("#contractorId").val();
+
+            if (contractorId != "" && contractorId != null && contractorId != 0) {
+                $.ajax({ 
+                    type: 'POST',
+                    cache: false,
+                    url: '/Invoice/UpdateContractor?contractorId='+ contractorId, 
+                    dataType: 'json', 
+                    contentType: 'application/json',               
+                    success: function (contractor) { 
+                        $.each(contractor, function(k, v) { 
+                            if (k != null && k != "") {
+                                if (v != null && v != "") {
+                                    $("#" +k).val(v);
+                                }
+                            }
+                        });                  
+                    },
+                    error: function() {
+
+                    }
                 });
-            };
-
-            function OnSuccess(response){
-                $(response).each(function(index, product){
-                    document.body.appendChild(document.createTextNode(product.Name));
-                });
-            };
-
-        </script>
-
-        <script type="text/javascript">
-            var i = 0;
-
-            (function(){
-                $("#contractorsList").select2({theme: "classic"});
-            })();
-
-            function AddSelect(idName){
-                $("#"+ idName).select2({placeholder: "Wyszukaj produkt", allowClear: true});
-                document.body.appendChild(document.createTextNode(idName));
-            };
-
-            function AddNewProductInput(){
-
-                var idName = "productsList" + i;
-                var html = `
-                      <div id="container${i}" class="col-4">
-                        <label for="text">Produkty</label>
-                        <select class="js-example-placeholder-single js-states form-control" id="${idName}" asp-for="ProductInvoice.Id"></select>
-                      </div>
-                    `;
-                var div = document.getElementById("myDropdown");
-                div.insertAdjacentHTML('afterend', html);
-                
-                var list = @Html.Raw(ViewBag.ProductsList);
-
-                var select = document.getElementById(idName);
-                var firstOption = document.createElement('option');
-                select.appendChild(firstOption);
-
-                AddSelect(idName);
-                i++;
-
-                for(var k = 0; k<=list.length; k++){
-                    var opt = document.createElement('option');
-                    opt.value = list[k].Id;
-                    opt.innerHTML = list[k].Name;
-                    select.appendChild(opt);
-                }
             }
-        </script>
-    }
+        }
+
+        function UpdateTotalPrice(id){
+            var quantity = parseInt($("#quantity_" + id).val());
+            var netPrice = parseFloat($("#netPrice_" + id).val());
+            var tax = parseInt($("#tax_" + id).val());
+
+            var totalNet = quantity * netPrice;
+            var totalGross = totalNet + (totalNet * (tax / 100));
+
+            $("#totalNet_" + id).val(totalNet);
+            $("#totalGross_" + id).val(totalGross);
+        }
+
+        function CreateInvoice(){
+            var listOfProducts = [];
+
+
+            $('#productContainer').children().each(function() { 
+                var id = $(this).attr('id');
+                
+                var product = {
+                    id : $("#product_"+id).val(),
+                    netPrice : $("#netPrice_"+id).val(),
+                    quantity : $("#quantity_"+id).val(),
+                    tax : $("#tax_"+id).val(),                    
+                };
+
+                listOfProducts.push(product);
+            })            
+
+            var invoice = {
+                invoiceTypeId : $("#invoiceTypeId").val(),
+                invoiceNumber : $("#invoiceNumber").val(),
+                saleDate : $("#saleDate").val(),
+                creationDate : $("#creationDate").val(),
+                contractorId : $("#contractorId").val(),
+                products : listOfProducts
+            }
+
+            alert(JSON.stringify(invoice));
+            
+            $.ajax({
+                type: 'POST',
+                dataType: 'JSON',
+                url: '/Invoice/Create',
+                data: { invoice : JSON.stringify(invoice) }, 
+                success: function (data) { 
+                    alert("JSON Data Sent To Server"); 
+                } 
+            });
+        }
+    </script>
 }

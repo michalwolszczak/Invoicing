@@ -6,16 +6,30 @@ using InvoicingWebCore.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(
-    builder.Configuration.GetConnectionString("DefaultConnection")
-    ));
+builder.Services
+    .AddDbContext<ApplicationDbContext>(options => options
+    .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services
+    .AddDefaultIdentity<ApplicationUser>(options =>
+    {
+        options.Password.RequiredLength = 3;
+        options.Password.RequiredUniqueChars = 3;
+        options.Password.RequireLowercase = false;
+        options.Password.RequireUppercase = false;
+        options.Password.RequireNonAlphanumeric = false;
+        options.Password.RequireDigit = false;
+    }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services
+    .ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
 
 builder.Services
     .AddControllersWithViews()
     .AddRazorRuntimeCompilation();
 
-builder.Services.AddRazorPages();
+builder.Services
+    .AddRazorPages();
 
 var app = builder.Build();
 

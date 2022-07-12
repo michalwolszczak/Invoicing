@@ -2,11 +2,10 @@
 
 namespace InvoicingWebCore.Models
 {
-    public class CompanyType
+    public class TaxType
     {
         [Key]
         public int Id { get; set; }
-        [Required]
-        public string Name { get; set; }
+        public int Tax { get; set; }
     }
 }

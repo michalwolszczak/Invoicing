@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Company>
+
+<div class="row">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <div class="container p-3">
+            <div class="row pt-4">
+                <div class="col-6">
+                    <h1>Your companies</h1>
+                </div>
+                <div class="col-6 text-end">
+                    <a asp-controller="Company" asp-action="Create" class="btn btn-primary">
+                        <i class="bia bi-file-plus"></i> &nbsp; Add new company
+                    </a>
+                </div>           
+            </div>		
+            <div class="row mb-5">
+                <div class="col-md-12 table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th scope="col">Company name</th>
+                                <th scope="col">Krs</th>
+                                <th scope="col">Regon</th>
+                                <th scope="col">Nip</th>
+                                <th scope="col"></th>  
+                                <th scope="col"></th> 
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach(var company in Model)
+                            {
+                                <tr>
+                                    <td>
+                                        @company.Name
+                                    </td>
+                                     <td>
+                                        @company.KRS
+                                    </td>
+                                    <td>
+                                        @company.Regon
+                                    </td>
+                                    <td>
+                                        @company.NIP
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a asp-controller="Company" asp-action="Edit" asp-route-id="@company.Id" style="min-width: 80px" class="btn btn-primary"><i class="bi bi-pencil-square"></i>Edit</a>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <a asp-controller="Company" asp-action="Delete" asp-route-id="@company.Id" style="min-width: 80px" class="btn btn-danger"><i class="bi bi-trash"></i>Delete</a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-3"></div>
+</div>

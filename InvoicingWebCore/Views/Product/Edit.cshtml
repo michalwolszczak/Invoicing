@@ -1,42 +1,57 @@
 ﻿@model Product
 
-<form method="post" asp-action="Edit">
-    <div class="border p-3 mt-4">
-        <div class="row pb-2">
-            <h2 class="text-primary">Edytuj produkt</h2>
-            <hr/>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Name">Nazwa produktu</label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="NetPrice">Cena netto</label>
-            <input asp-for="NetPrice" class="form-control" />
-            <span asp-validation-for="NetPrice" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="GrossPrice">Cena brutto</label>
-            <input asp-for="GrossPrice" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label asp-for="Tax">VAT [%]</label>
-            <input asp-for="Tax" class="form-control" />
-            <span asp-validation-for="Tax" class="text-danger"></span>
-        </div>        
-        <div class="mb-3">
-            <label asp-for="Description">Opis</label>
-            <input asp-for="Description" class="form-control" />
-        </div>
+<div class="row">
+    <div class="col-sm-3"></div>
+    <div class="col-sm-6">
+        <form method="post">
+            <div class="border p-3 mt-4">
+                <div class="row pb-2">
+                    <h2 class="text-primary">Create product</h2>
+                    <hr/>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="fw-bold" asp-for="Name">Product name</label>
+                        <input asp-for="Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-4">
+                        <label class="fw-bold" asp-for="NetPrice">Net price</label>
+                        <input asp-for="NetPrice" class="form-control" />
+                        <span asp-validation-for="NetPrice" class="text-danger"></span>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="fw-bold" asp-for="Tax">VAT [%]</label>
+                        <select id="tax" class="form-select" asp-for="Tax" asp-items="@ViewBag.TaxTypes">
+                        </select>
+                    </div>
+                    <div class="col-sm-4">
+                        <label class="fw-bold" asp-for="GrossPrice">Gross price</label>
+                        <input asp-for="GrossPrice" class="form-control" />
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-sm-8">
+                        <label class="fw-bold" asp-for="Description">Description</label>
+                        <textarea asp-for="Description" class="form-control"></textarea>
+                    </div>
+                </div>
 
-        <button type="submit" class="btn btn-primary" style="width:150px">Aktualizuj produkt</button>
-        <a asp-controller="Product" asp-action="Index" class="btn btn-secondary" style="width:150px">Wróc do listy produktów</a>
+                <button type="submit" class="btn btn-primary">Update product</button>
+                <a asp-controller="Product" asp-action="Index" class="btn btn-secondary">Return to list</a>
+            </div>
+        </form>
     </div>
-</form>
+    <div class="col-sm-3"></div>
+</div>
 
 @section Scripts{
-    @{
         <partial name="_ValidationScriptsPartial" />
-    }
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+
+        <script type="text/javascript">
+        </script>
+
 }

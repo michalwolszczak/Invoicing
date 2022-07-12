@@ -1,11 +1,16 @@
 ﻿@using InvoicingWebCore.ViewModel
 
-@model Contractor
+@model Company
 
-<div class="row">
+<div class="row mt-3">
     <div class="col-3"></div>
     <div class="col-6">
         <form method="post">
+            <input hidden asp-for="MonthMumber" />
+            <input hidden asp-for="Id" />
+            <input hidden asp-for="UserId" />
+            <input hidden asp-for="InvoiceNumberCounter" />
+            
             <div class="border p-3 mt-4">
                 <div class="row text-primary">
                     <h4>General</h4>
@@ -13,21 +18,31 @@
                 <div class="px-3">
                     <div class="row mb-3">
                         <div class="col-12">
-                            <label asp-for="Name" class="fw-bold">Company name</label>
+                            <label asp-for="Name">Company name</label>
                             <input asp-for="Name" class="form-control" />
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-6">
+                            <label asp-for="FirstName">First name</label>
+                            <input asp-for="FirstName" class="form-control" />
+                        </div>
+                        <div class="col-6">
+                            <label asp-for="LastName">Last name</label>
+                            <input asp-for="LastName" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-4">
-                            <label asp-for="NIP" class="fw-bold"></label>
+                            <label asp-for="NIP"></label>
                             <input asp-for="NIP" class="form-control"/>
                         </div>
                         <div class="col-4">
-                            <label asp-for="KRS" class="fw-bold"></label>
+                            <label asp-for="KRS"></label>
                             <input asp-for="KRS" class="form-control"/>
                         </div>
                         <div class="col-4">
-                            <label asp-for="Regon" class="fw-bold"></label>
+                            <label asp-for="Regon"></label>
                             <input asp-for="Regon" class="form-control"/>
                         </div>
                     </div>
@@ -38,41 +53,38 @@
                 <div class="px-3">
                     <div class="row mb-3">
                         <div class="col-12">
-                            <label asp-for="AddressLine1" class="fw-bold">Address Line1</label>
+                            <label asp-for="AddressLine1">Address Line1</label>
                             <input asp-for="AddressLine1" class="form-control" />
                         </div>
                     </div>
                     <div class="row mb-3">
                         <div class="col-12">
-                            <label asp-for="AddressLine2" class="fw-bold">Address Line2</label>
+                            <label asp-for="AddressLine2">Address Line2</label>
                             <input asp-for="AddressLine2" class="form-control" />
                         </div>
                     </div>
                     <div class="row mb-4">
                         <div class="col-9">
-                            <label asp-for="City" class="fw-bold">City</label>
+                            <label asp-for="City">City</label>
                             <input asp-for="City" class="form-control" />
                         </div>
                         <div class="col-3">
-                            <label asp-for="PostalCode" class="fw-bold">Postal code</label>
+                            <label asp-for="PostalCode">Postal code</label>
                             <input asp-for="PostalCode" class="form-control" />                
                         </div>
                     </div>
                     <div class="row mb-4">
                         <div class="col-9">
-                            <label asp-for="Province" class="fw-bold"></label>
+                            <label asp-for="Province"></label>
                             <input asp-for="Province" class="form-control" />
                         </div>
                         <div class="col-3">
-                            <label asp-for="Country" class="fw-bold"></label>
+                            <label asp-for="Country"></label>
                             <input asp-for="Country" class="form-control" />
                         </div>
                     </div>
                 </div>
-                
-                <button type="submit" class="btn btn-primary">Add new contractor</button>
-                <a asp-controller="Contractor" asp-action="Index" class="btn btn-secondary">Return to list</a>
-
+                <button class="btn btn-primary" type="submit">Update</button>
             </div>
         </form>
     </div>
