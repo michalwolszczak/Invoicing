@@ -17,19 +17,28 @@
                     </div>
                 </div>
                 <div class="row mb-3">
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <label class="fw-bold" asp-for="NetPrice">Net price</label>
-                        <input asp-for="NetPrice" class="form-control" />
+                        <input id="netPrice" onchange="UpdateTotalPrice()" asp-for="NetPrice" class="form-control" />
                         <span asp-validation-for="NetPrice" class="text-danger"></span>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <label class="fw-bold" asp-for="Tax">VAT [%]</label>
-                        <select id="tax" class="form-select" asp-for="Tax" asp-items="@ViewBag.TaxTypes">
+                        <select id="tax" onchange="UpdateTotalPrice()" id="tax" class="form-select" asp-for="Tax" asp-items="@ViewBag.TaxTypes">
                         </select>
                     </div>
-                    <div class="col-sm-4">
+                    <div class="col-sm-3">
                         <label class="fw-bold" asp-for="GrossPrice">Gross price</label>
-                        <input asp-for="GrossPrice" class="form-control" />
+                        <input id="grossPrice" readonly asp-for="GrossPrice" class="form-control" />
+                    </div>
+                    <div class="col-sm-3">
+                        <label class="fw-bold" asp-for="QuantityUnit">Unit</label>
+                        <select asp-for="QuantityUnit" class="form-select">
+                            <option selected="selected"></option>
+                            <option value="szt">szt</option>
+                            <option value="godz">godz</option>
+                            <option value="dni">dni</option>
+                        </select>
                     </div>
                 </div>
                 <div class="row mb-3">
@@ -48,10 +57,19 @@
 </div>
 
 @section Scripts{
-        <partial name="_ValidationScriptsPartial" />
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
 
-        <script type="text/javascript">
-        </script>
+    <partial name="_ValidationScriptsPartial" />
+
+    <script type="text/javascript">
+        
+        function UpdateTotalPrice(){
+            var netPrice = parseFloat($("#netPrice").val());
+            var tax = parseInt($("#tax").val());
+            var grossPrice = netPrice + (netPrice * (tax / 100));
+            
+            $("#grossPrice").val(grossPrice);
+        }
+
+    </script>
 
 }

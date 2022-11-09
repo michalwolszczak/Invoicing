@@ -50,6 +50,8 @@ namespace InvoicingWebCore.Controllers
                     TempData["success"] = "A new contractor has been added";
                     return RedirectToAction("Index");
                 }
+                TempData["error"] = "Something went wrong";
+                return View(contractor);
             }
             TempData["error"] = "The user in not logged in";
             return RedirectToAction("Login", "Account");
@@ -77,11 +79,12 @@ namespace InvoicingWebCore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Contractor obj)
         {
+            ModelState.Remove("Company");
             if (ModelState.IsValid)
             {
                 _db.Contractors.Update(obj);
                 _db.SaveChanges();
-                TempData["success"] = "Kontrahent został zaktualizowany";
+                TempData["success"] = "Contractor has been updated";
                 return RedirectToAction("Index");
             }
             return View(obj);

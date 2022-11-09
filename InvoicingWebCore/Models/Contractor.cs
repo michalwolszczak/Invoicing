@@ -15,27 +15,21 @@ namespace InvoicingWebCore.Models
         [Required]
         public string Name { get; set; }
         [MaxLength(10)]
-        public string KRS { get; set; }
+        public string? KRS { get; set; }
         [MaxLength(9)]
-        public string Regon { get; set; }
-        [Required]
+        public string? Regon { get; set; }
+        [Required(ErrorMessage = "The NIP is required")]
+        
         [MaxLength(10)]
-        public string NIP { get; set; }
-
-
-        //address
-        [Required]
-        public string City { get; set; }
-        [Required]
-        public string Province { get; set; }
-        [Required]
-        public string PostalCode { get; set; }
-        [Required]
-        public string Country { get; set; }
-        [Required]
-        public string AddressLine1 { get; set; }
-        [Required]
-        public string AddressLine2 { get; set; }
+        public string? NIP { get; set; }
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
+        public string? City { get; set; }
+        public string? Province { get; set; }
+        public string? PostalCode { get; set; }
+        public string? Country { get; set; }
+        public string? AddressLine1 { get; set; }
+        public string? AddressLine2 { get; set; }
 
     }
 }

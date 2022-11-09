@@ -332,6 +332,12 @@ th {
     border-width: 0;
 }
 
+.printTh {
+    font-weight: bold;
+    border: 1px solid;
+    background-color: #bbbbbb;
+}
+
 label {
     display: inline-block;
 }

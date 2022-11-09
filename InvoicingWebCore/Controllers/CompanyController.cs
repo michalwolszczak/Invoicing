@@ -4,6 +4,7 @@ using InvoicingWebCore.ViewModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using NIP24;
 using System.Security.Claims;
 
 namespace InvoicingWebCore.Controllers
@@ -93,6 +94,35 @@ namespace InvoicingWebCore.Controllers
             _db.SaveChanges();
             TempData["success"] = "Company has been deleted";
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult GetCompanyData(string nip = "")
+        {
+            if(nip != "")
+            {
+                NIP24Client nip24 = new NIP24Client("uKM4ARSA8hPg", "UeyaO517V4Mz");
+                AllData all = nip24.GetAllData(Number.NIP, nip);
+
+                if(nip24.LastError != "")
+                {
+                    Company company = new()
+                    {
+                        Name = all.Name,
+                        FirstName = all.FirstName,
+                        LastName = all.LastName,
+                        Regon = all.REGON,
+                        AddressLine1 = all.StreetNumber + " " + all.Street + ", " + all.HouseNumber,
+                        City = all.City,
+                        PostalCode = all.PostCode,
+                        Province = all.State,
+                        Country = all.County
+                    };
+
+                    return Json(company);
+                }
+            }       
+            return Json("");
         }
     }
 }

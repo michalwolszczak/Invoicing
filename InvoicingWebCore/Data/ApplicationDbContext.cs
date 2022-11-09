@@ -17,11 +17,12 @@ namespace InvoicingWebCore.Data
         public DbSet<ApplicationUser> Users { get; set; }
         public DbSet<Contractor> Contractors { get; set; }
         public DbSet<TaxType> TaxTypes { get; set; }
+        public DbSet<InvoiceProduct> InvoiceProducts { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
+            new Seeder(modelBuilder).Seed();
             //modelBuilder.Entity<Contractor>()
             //    .HasOne(a => a.Address)
             //    .WithOne(c => c.Contractor)

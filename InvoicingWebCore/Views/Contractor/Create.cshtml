@@ -18,9 +18,20 @@
                         </div>
                     </div>
                     <div class="row mb-3">
+                        <div class="col-sm-6">
+                            <label asp-for="FirstName" class="fw-bold">First name</label>
+                            <input asp-for="FirstName" class="form-control" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="LastName" class="fw-bold">Last name</label>
+                            <input asp-for="LastName" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
                         <div class="col-4">
                             <label asp-for="NIP" class="fw-bold"></label>
                             <input asp-for="NIP" class="form-control"/>
+                            <span asp-validation-for="NIP" class="text-danger"></span>
                         </div>
                         <div class="col-4">
                             <label asp-for="KRS" class="fw-bold"></label>
@@ -78,3 +89,7 @@
     </div>
     <div class="col-3"></div>
 </div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

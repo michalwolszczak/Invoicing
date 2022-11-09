@@ -29,7 +29,7 @@ namespace InvoicingWebCore.Controllers
         //get
         public IActionResult Create()
         {
-            ViewBag.TaxTypes = new SelectList(_db.TaxTypes.ToList(), "Id", "Tax");
+            ViewBag.TaxTypes = new SelectList(_db.TaxTypes.ToList(), "Tax", "Tax");
             return View();
         }
 
@@ -48,7 +48,6 @@ namespace InvoicingWebCore.Controllers
                 if (ModelState.IsValid)
                 {
                     product.Company = user.Company;
-                    product.Tax = _db.TaxTypes.Find(product.Tax).Tax;
                     _db.Products.Add(product);
                     _db.SaveChanges();
                     TempData["success"] = "A new product has been added";
@@ -81,6 +80,7 @@ namespace InvoicingWebCore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(Product product)
         {
+            ModelState.Remove("Company");
             if (ModelState.IsValid)
             {
                 _db.Products.Update(product);

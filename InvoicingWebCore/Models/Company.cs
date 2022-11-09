@@ -14,7 +14,7 @@ namespace InvoicingWebCore.Models
         [Required]
         public List<Invoice>? Invoices { get; set; } = new List<Invoice>();
         public List<Product>? Products { get; set; } = new List<Product>();
-        public List<Contractor>? Contractor { get; set; } = new List<Contractor>();
+        public List<Contractor>? Contractor { get; set; } = new List<Contractor>();        
         [Required]
         public string Name { get; set; }
         public string? FirstName { get; set; }
@@ -25,7 +25,6 @@ namespace InvoicingWebCore.Models
         [MaxLength(9)]
         public string Regon { get; set; }
         [Required]
-        [MaxLength(10)]
         public string NIP { get; set; }
         [Required]
         public int InvoiceNumberCounter { get; set; } = 0;

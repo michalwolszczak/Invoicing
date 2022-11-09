@@ -177,28 +177,29 @@ namespace InvoicingWebCore.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AddressLine1")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AddressLine2")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CompanyId")
                         .HasColumnType("int");
 
                     b.Property<string>("Country")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("KRS")
-                        .IsRequired()
                         .HasMaxLength(10)
                         .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("LastName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NIP")
                         .IsRequired()
@@ -210,15 +211,12 @@ namespace InvoicingWebCore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PostalCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Province")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Regon")
-                        .IsRequired()
                         .HasMaxLength(9)
                         .HasColumnType("nvarchar(9)");
 
@@ -267,6 +265,47 @@ namespace InvoicingWebCore.Migrations
                     b.ToTable("Invoices");
                 });
 
+            modelBuilder.Entity("InvoicingWebCore.Models.InvoiceProduct", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int?>("InvoiceId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("NetPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<string>("QuantityUnit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Tax")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalGross")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("TotalNet")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("InvoiceId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("InvoiceProducts");
+                });
+
             modelBuilder.Entity("InvoicingWebCore.Models.InvoiceType", b =>
                 {
                     b.Property<int>("Id")
@@ -282,6 +321,33 @@ namespace InvoicingWebCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("InvoiceTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Name = "Faktura sprzedaży"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Name = "Faktura zaliczkowa"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Name = "Faktura końcowa"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Name = "Faktura korygująca"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Name = "Faktura VAT marża"
+                        });
                 });
 
             modelBuilder.Entity("InvoicingWebCore.Models.Product", b =>
@@ -311,7 +377,7 @@ namespace InvoicingWebCore.Migrations
                     b.Property<string>("QuantityUnit")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Tax")
+                    b.Property<int>("Tax")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -335,6 +401,23 @@ namespace InvoicingWebCore.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("TaxTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Tax = 5
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Tax = 8
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Tax = 23
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -474,7 +557,6 @@ namespace InvoicingWebCore.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-
             modelBuilder.Entity("InvoicingWebCore.Models.Company", b =>
                 {
                     b.HasOne("InvoicingWebCore.Models.ApplicationUser", "User")
@@ -520,6 +602,21 @@ namespace InvoicingWebCore.Migrations
                     b.Navigation("Contractor");
 
                     b.Navigation("InvoiceType");
+                });
+
+            modelBuilder.Entity("InvoicingWebCore.Models.InvoiceProduct", b =>
+                {
+                    b.HasOne("InvoicingWebCore.Models.Invoice", "Invoice")
+                        .WithMany("Products")
+                        .HasForeignKey("InvoiceId");
+
+                    b.HasOne("InvoicingWebCore.Models.Product", "Product")
+                        .WithMany("Invoices")
+                        .HasForeignKey("ProductId");
+
+                    b.Navigation("Invoice");
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("InvoicingWebCore.Models.Product", b =>
@@ -604,7 +701,17 @@ namespace InvoicingWebCore.Migrations
                     b.Navigation("Invoices");
                 });
 
+            modelBuilder.Entity("InvoicingWebCore.Models.Invoice", b =>
+                {
+                    b.Navigation("Products");
+                });
+
             modelBuilder.Entity("InvoicingWebCore.Models.InvoiceType", b =>
+                {
+                    b.Navigation("Invoices");
+                });
+
+            modelBuilder.Entity("InvoicingWebCore.Models.Product", b =>
                 {
                     b.Navigation("Invoices");
                 });

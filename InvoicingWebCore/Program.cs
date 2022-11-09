@@ -2,6 +2,12 @@ using InvoicingWebCore.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using InvoicingWebCore.Models;
+using InvoicingWebCore;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
+using InvoicingWebCore.Services;
+using InvoicingWebCore.Interfaces;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,15 +27,22 @@ builder.Services
         options.Password.RequireDigit = false;
     }).AddEntityFrameworkStores<ApplicationDbContext>();
 
-builder.Services
-    .ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
+builder.Services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/Login");
 
 builder.Services
     .AddControllersWithViews()
     .AddRazorRuntimeCompilation();
 
-builder.Services
-    .AddRazorPages();
+builder.Services.AddRazorPages();
+
+builder.Services.AddTransient<IItemService, ItemService>();
+builder.Services.AddTransient<IContractorService, ContractorService>();
+builder.Services.AddTransient<IInvoiceService, InvoiceService>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IDatabaseService, DatabaseService>();
+builder.Services.AddLogging();
+
+builder.Services.AddSession(s => s.IdleTimeout = TimeSpan.FromMinutes(60));
 
 var app = builder.Build();
 
@@ -41,12 +54,28 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+var supportedCultures = new[]
+{
+    new CultureInfo("en-US")
+};
+
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture("en-US"),
+    // Formatting numbers, dates, etc.
+    SupportedCultures = supportedCultures,
+    // UI strings that we have localized.
+    SupportedUICultures = supportedCultures
+});
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseSession();
 
 app.MapControllerRoute(
     name: "default",

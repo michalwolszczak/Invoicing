@@ -1,0 +1,80 @@
+﻿@model Invoice
+
+<div class="row">
+    <div class="col-sm-2"></div>
+    <div class="col-sm-8 border p-5 mt-3" style="font-size: 1rem;">
+        <div class="row m-1">
+            <div class="col">
+                <label class="fw-bold" asp-for="Number">Invoice number: </label>
+                <span>@Model.Number</span>
+            </div>            
+        </div>
+        <div class="row m-1">
+            <div class="col">
+                <label class="fw-bold" asp-for="SaleDate">Sale date: </label>
+                @Html.Label(Model.SaleDate.ToShortDateString())
+            </div>            
+        </div>
+        <div class="row m-1">
+            <div class="col">
+                <label class="fw-bold" asp-for="CreationDate">Creation date: </label>
+                @Html.Label(Model.CreationDate.ToShortDateString())
+            </div>            
+        </div>
+        <br/>
+        <div class="row m-1">
+            <div class="col-sm-6">
+                <label class="fw-bold">Seller</label>
+                <div class="row">
+                    <label>@Model.Company.Name</label>
+                    <label>@Model.Company.AddressLine1</label>
+                    <label>@Model.Company.AddressLine2</label>
+                    <label>@Model.Company.PostalCode</label>
+                    <label>@Model.Company.City</label>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <label class="fw-bold">Buyer</label>
+                <div class="row">
+                    <label>@Model.Contractor.Name</label>
+                    <label>@Model.Contractor.AddressLine1</label>
+                    <label>@Model.Contractor.AddressLine2</label>
+                    <label>@Model.Contractor.PostalCode</label>
+                    <label>@Model.Contractor.City</label>
+                </div>
+            </div>
+        </div>
+        <br />
+        <div class="row p-5">
+            <table style="font-size: .75rem">
+                <thead>
+                    <tr>
+                        <th class="col printTh">LP</th>
+                        <th class="col printTh">Product name / service</th>
+                        <th class="col printTh">Quantity</th>
+                        <th class="col printTh">Net price</th>
+                        <th class="col printTh">Net total</th>
+                        <th class="col printTh">Tax</th>
+                        <th class="col printTh">Tax total</th>
+                        <th class="col printTh">Gross total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach(var product in Model.Products){
+                        <tr>
+                            <td>1</td>
+                            <td>@product.Product.Name</td>
+                            <td>@product.Quantity</td>
+                            <td>@product.NetPrice</td>
+                            <td>@product.TotalNet</td>
+                            <td>@product.Tax</td>
+                            <td>taxTotal</td>
+                            <td>@product.TotalGross</td>
+                        </tr>    
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-sm-2"></div>
+</div>

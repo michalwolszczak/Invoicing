@@ -34,9 +34,14 @@
                     </div>
                     <div class="row mb-3">
                         <div class="col-4">
-                            <label asp-for="NIP"></label>
-                            <input asp-for="NIP" class="form-control"/>
-                        </div>
+                            <div class="float-start" style="width: 90%">
+                                <label asp-for="NIP"></label>
+                                <input id="nip" asp-for="NIP" class="form-control"/>
+                            </div>
+                            <div class="float-end text-center align-text-bottom mt-3" style="width: 10%; font-size: 2rem">
+                                <i onclick="GetCompanyData()" class="bi bi-download" style="cursor: pointer"></i>
+                            </div>                            
+                        </div>   
                         <div class="col-4">
                             <label asp-for="KRS"></label>
                             <input asp-for="KRS" class="form-control"/>
@@ -90,3 +95,24 @@
     </div>
     <div class="col-3"></div>
 </div>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+
+    <script type="text/javascript">
+        function GetCompanyData(){
+            var nip = $("#nip").val();
+
+            $.ajax({
+                type: 'POST',
+                dataType: 'JSON',
+                url: '/Company/GetCompanyData',
+                data: { nip : nip }, 
+                success: function (response) { 
+                    window.location.href = response.redirectToUrl;
+                } 
+            });            
+        }
+    </script>
+}

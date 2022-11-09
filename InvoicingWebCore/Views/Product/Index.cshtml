@@ -19,8 +19,9 @@
                         <tr>
                             <th scope="col">Product name</th>
                             <th scope="col">Net price</th>
-                            <th scope="col">Gross price</th>
                             <th scope="col">VAT [%]</th>
+                            <th scope="col">Gross price</th>
+                            <th scope="col">Unit</th>
                             <th scope="col">Description</th>  
                             <th scope="col"></th>  
                             <th scope="col"></th> 
@@ -37,10 +38,13 @@
                                     @obj.NetPrice
                                 </td>
                                 <td>
+                                    @obj.Tax
+                                </td>
+                                <td>
                                     @obj.GrossPrice
                                 </td>
                                 <td>
-                                    @obj.Tax
+                                    @obj.QuantityUnit
                                 </td>
                                 <td>
                                     @obj.Description

@@ -10,6 +10,7 @@ namespace InvoicingWebCore.Models
         [Key]
         public int Id { get; set; }
         [Required]
+        [DisplayName("Product name")]
         public string Name { get; set; }
         public string? Description { get; set; }
         [DisplayName("Gross price")]
@@ -17,10 +18,11 @@ namespace InvoicingWebCore.Models
         [Required]
         [DisplayName("Net price")]
         public decimal NetPrice { get; set; }
-        public int? Tax { get; set; }
+        public int Tax { get; set; }
         [DisplayName("Quantity unit")]
         public string? QuantityUnit { get; set; }
-        public List<Invoice> Invoices { get; set; }
+        [JsonIgnore]
+        public List<InvoiceProduct>? Invoices { get; set; } = new List<InvoiceProduct>();
         [JsonIgnore]
         public Company Company { get; set; }
     }

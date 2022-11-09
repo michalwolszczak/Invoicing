@@ -1,34 +1,91 @@
 ﻿@model Contractor
 
-<form method="post">
-    <div class="border p-3 mt-4">
-        <div class="row pb-2">
-            <h2 class="text-primary">Edytuj kontrahenta</h2>
-            <hr/>
-        </div>
-        <div class="mb-3">
-            <label asp-for="Name">Nazwa</label>
-            <input asp-for="Name" class="form-control" />
-            <span asp-validation-for="Name" class="text-danger"></span>
-        </div>
-        <div class="mb-3">
-            <label asp-for="KRS">KRS</label>
-            <input asp-for="KRS" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label asp-for="Regon">Regon</label>
-            <input asp-for="Regon" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label asp-for="NIP">NIP</label>
-            <input asp-for="NIP" class="form-control" />
-            <span asp-validation-for="NIP" class="text-danger"></span>
-        </div>
+<div class="row">
+    <div class="col-3"></div>
+    <div class="col-6">
+        <form method="post">
+            <input hidden asp-for="CompanyId" />
+            <div class="border p-3 mt-4">
+                <div class="row text-primary">
+                    <h4>General</h4>
+                </div>
+                <div class="px-3">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label asp-for="Name" class="fw-bold">Company name</label>
+                            <input asp-for="Name" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-sm-6">
+                            <label asp-for="FirstName" class="fw-bold">First name</label>
+                            <input asp-for="FirstName" class="form-control" />
+                        </div>
+                        <div class="col-sm-6">
+                            <label asp-for="LastName" class="fw-bold">Last name</label>
+                            <input asp-for="LastName" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-4">
+                            <label asp-for="NIP" class="fw-bold"></label>
+                            <input asp-for="NIP" class="form-control"/>
+                        </div>
+                        <div class="col-4">
+                            <label asp-for="KRS" class="fw-bold"></label>
+                            <input asp-for="KRS" class="form-control"/>
+                        </div>
+                        <div class="col-4">
+                            <label asp-for="Regon" class="fw-bold"></label>
+                            <input asp-for="Regon" class="form-control"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row text-primary">
+                    <h4>Contact</h4>
+                </div>
+                <div class="px-3">
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label asp-for="AddressLine1" class="fw-bold">Address Line1</label>
+                            <input asp-for="AddressLine1" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label asp-for="AddressLine2" class="fw-bold">Address Line2</label>
+                            <input asp-for="AddressLine2" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-9">
+                            <label asp-for="City" class="fw-bold">City</label>
+                            <input asp-for="City" class="form-control" />
+                        </div>
+                        <div class="col-3">
+                            <label asp-for="PostalCode" class="fw-bold">Postal code</label>
+                            <input asp-for="PostalCode" class="form-control" />                
+                        </div>
+                    </div>
+                    <div class="row mb-4">
+                        <div class="col-9">
+                            <label asp-for="Province" class="fw-bold"></label>
+                            <input asp-for="Province" class="form-control" />
+                        </div>
+                        <div class="col-3">
+                            <label asp-for="Country" class="fw-bold"></label>
+                            <input asp-for="Country" class="form-control" />
+                        </div>
+                    </div>
+                </div>
 
-        <button type="submit" class="btn btn-primary" style="width:150px">Edytuj kontrahenta</button>
-        <a asp-controller="Contractor" asp-action="Index" class="btn btn-secondary" style="width:150px">Wróć do listy</a>
+                <button type="submit" class="btn btn-primary">Update contractor</button>
+                <a asp-controller="Contractor" asp-action="Index" class="btn btn-secondary">Return to list</a>
+            </div>
+        </form>
     </div>
-</form>
+    <div class="col-3"></div>
+</div>
 
 @section Scripts{
     @{

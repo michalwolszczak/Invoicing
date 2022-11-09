@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace InvoicingWebCore.Controllers
 {
@@ -42,7 +43,7 @@ namespace InvoicingWebCore.Controllers
                 if (result.Succeeded)
                 {
                     await _signInManager.SignInAsync(user, isPersistent: false);
-                    ViewData["Test"] = "ale jazda";
+
                     return RedirectToAction("Create", "Company");
                 }
 
@@ -67,7 +68,7 @@ namespace InvoicingWebCore.Controllers
                 var result = await _signInManager.PasswordSignInAsync(model.Login, model.Password, model.RememberMe, false);
 
                 if (result.Succeeded)
-                {
+                {                    
                     return RedirectToAction("Index", "Home");
                 }
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");

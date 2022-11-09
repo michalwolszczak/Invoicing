@@ -1,115 +1,437 @@
 ﻿@model Invoice
 
-<form method="post">
-    <div class="border p-3 mt-4">
-        <div class="row pb-2">
-            <h2 class="text-primary">Edit invoice</h2>
-            <hr/>
-        </div>
-
-        <div class="row mb-3" >
-            <div class="col-3">
-                <label for="string">Typ faktury</label>
-                @if(Model is not null)
-                {
-                    <select asp-for="InvoiceType.Id" class="form-select" id="invoiceType" name="invoiceType">
-@*                        @foreach(var contr in Model.InvoiceTypes)
-                        {
-                            if(contr.Name == @Model.InvoiceType.Name)
-                            {
-                                <option selected="selected">@contr.Name</option>
-                            }else
-                            {
-                                <option>@contr.Name</option> 
-                            }
-                              
-                        }
-*@                    </select>                    
-                }else{ <input disabled class="form-control"/>}
+<div class="row">
+    <div class="col-sm-1"></div>
+    <div class="col-sm-10">
+        <input id="invoiceId" hidden value="@Model.Id"/>
+        <div class="border p-3 mt-3">
+            <div class="row pb-1">
+                <h2 class="text-primary">Edit invoice</h2>
+                <hr/>
             </div>
+        
+            <div class="row mb-3">
+                <div class="col-3">
+                    <label asp-for="InvoiceType.Name" class="fw-bold">Invoice type</label>
+                    <select asp-for="InvoiceType.Id" class="form-select" id="invoiceTypeId" asp-items="@ViewBag.InvoiceTypeList"></select>                    
+                </div>
 
-            <div class="col-5">
-                <label asp-for="Contractor.Name">Kontrahent</label>
-                <input disabled asp-for="Contractor.Name" class="form-control"/>
-@*                <select asp-for="Invoice.Contractor" class="form-select" id="contractor" name="contractor">
-                    @foreach(var contr in Model.Contractors)
-                    {
-                        <option>@contr.Name</option>   
-                    }
-                  </select>
-*@                             
-            </div>   
-            
-            <div class="col-3">
-                <label asp-for="SaleDate">Data realizacji</label>
-                <input asp-for="SaleDate" class="form-control" />
-            </div>
-        </div>
+                <div class="col-3">
+                    <label asp-for="Number" class="fw-bold">No.</label>
+                    <input disabled id="invoiceNumber" asp-for="Number" class="form-control" />
+                </div>     
 
-        <div class="row text-start mb-3">
-            <div class="col-md-6">
-                <div class="row">
-                    <div class="col-md-12">
-                        <label style="font-size: 1.7vw;">Seller</label>
-                    </div>
+                <div class="col-3">
+                    <label asp-for="SaleDate" class="fw-bold"></label>
+                    <input id="saleDate" asp-for="SaleDate" class="form-control" />
+                    <span asp-validation-for="SaleDate" class="text-danger"></span>
+                </div>
+
+                <div class="col-3">
+                    <label asp-for="CreationDate" class="fw-bold"></label>
+                    <input id="creationDate" asp-for="CreationDate" class="form-control" />
+                    <span asp-validation-for="CreationDate" class="text-danger"></span>
                 </div>
             </div>
-            <div class="col-md-6">
-                <div class="row">
-                    <div class="col-md-12">
-                        <label style="font-size: 1.7vw;">Buyer</label>
+
+            <div class="row">
+                <div class="col-6 text-start border-end border-secondary">
+                    <h4>Seller</h4>
+
+                    <div class="row text-primary">
+                        <h4>General</h4>
                     </div>
+
+                    <div class="px-3">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Company name</label>
+                                <input disabled asp-for="Company.Name" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="fw-bold">First name</label>
+                                <input disabled asp-for="Company.FirstName" class="form-control" />
+                            </div>
+                            <div class="col-6">
+                                <label class="fw-bold">Last name</label>
+                                <input disabled asp-for="Company.LastName" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label class="fw-bold">NIP</label>
+                                <input disabled asp-for="Company.NIP" class="form-control"/>
+                            </div>
+                            <div class="col-4">
+                                <label class="fw-bold">KRS</label>
+                                <input disabled asp-for="Company.KRS" class="form-control"/>
+                            </div>
+                            <div class="col-4">
+                                <label class="fw-bold">Regon</label>
+                                <input disabled asp-for="Company.Regon" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row text-primary">
+                        <h4>Contact</h4>
+                    </div>
+
+                    <div class="px-3">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Address Line1</label>
+                                <input disabled asp-for="Company.AddressLine1" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Address Line2</label>
+                                <input disabled asp-for="Company.AddressLine2" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-9">
+                                <label class="fw-bold">City</label>
+                                <input disabled asp-for="Company.City" class="form-control" />
+                            </div>
+                            <div class="col-3">
+                                <label class="fw-bold">Postal code</label>
+                                <input disabled asp-for="Company.PostalCode" class="form-control" />                
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-9">
+                                <label class="fw-bold">Province</label>
+                                <input disabled asp-for="Company.Province" class="form-control" />
+                            </div>
+                            <div class="col-3">
+                                <label class="fw-bold">Country</label>
+                                <input disabled asp-for="Company.Country" class="form-control" />
+                            </div>
+                        </div>
+                    </div>                              
+                </div>
+                <div class="col-6 text-start">
+                    <h4>Buyer</h4>
+                     
+                    <div class="row text-primary">
+                        <h4>General</h4>
+                    </div>
+
+                    <div class="px-3">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Company name</label>
+                                <select onchange="UpdateBuyer()" asp-for="ContractorId" class="form-select" id="contractorId" asp-items="@ViewBag.ContractorList">                                    
+                                 </select>    
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="fw-bold">First name</label>
+                                <input disabled id="FirstName" asp-for="Contractor.FirstName" class="form-control" />
+                            </div>
+                            <div class="col-6">
+                                <label class="fw-bold">Last name</label>
+                                <input disabled id="LastName" asp-for="Contractor.LastName" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-4">
+                                <label class="fw-bold">NIP</label>
+                                <input disabled id="nip" asp-for="Contractor.NIP" class="form-control"/>
+                            </div>
+                            <div class="col-4">
+                                <label class="fw-bold">KRS</label>
+                                <input disabled id="krs" asp-for="Contractor.KRS" class="form-control"/>
+                            </div>
+                            <div class="col-4">
+                                <label class="fw-bold">Regon</label>
+                                <input disabled id="regon" asp-for="Contractor.Regon" class="form-control"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row text-primary">
+                        <h4>Contact</h4>
+                    </div>
+
+                    <div class="px-3">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Address Line1</label>
+                                <input disabled id="addressLine1" asp-for="Contractor.AddressLine1" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <label class="fw-bold">Address Line2</label>
+                                <input disabled id="addressLine2" asp-for="Contractor.AddressLine2" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-9">
+                                <label class="fw-bold">City</label>
+                                <input disabled id="city" asp-for="Contractor.City" class="form-control" ~~/>
+                            </div>
+                            <div class="col-3">
+                                <label class="fw-bold">Postal code</label>
+                                <input disabled id="postalCode" asp-for="Contractor.PostalCode" class="form-control" />                
+                            </div>
+                        </div>
+                        <div class="row mb-4">
+                            <div class="col-9">
+                                <label class="fw-bold">Province</label>
+                                <input disabled id="province" asp-for="Contractor.Province" class="form-control" />
+                            </div>
+                            <div class="col-3">
+                                <label class="fw-bold">Country</label>
+                                <input disabled id="country" asp-for="Contractor.Country" class="form-control" />
+                            </div>
+                        </div>
+                    </div>                              
+                </div>
+            </div>
+            <div class="row mb-2">
+                <h4>Invoice entries</h4>
+            </div>
+
+            <div class="row border mx-3">
+                <div class="row mt-3">
+                    <div class="col-sm-5">
+                        <label class="fw-bold">Name</label>                       
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">Quantity</label>                      
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">Quantity unit</label>                     
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">Unit net price</label>                     
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">VAT %</label>                      
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">Total net</label>                      
+                    </div>
+                    <div class="col-sm-1">
+                        <label class="fw-bold">Total gross</label>                       
+                    </div>
+                    <div class="col-sm-1">
+                    </div>
+                </div>
+                <div class="row mb-3" id="productContainer">
+         
+
+                </div>
+                <div class="row-cols-7 my-2">
+                    <button class="btn btn-primary" onclick="AddItem()">Add item</button>
+                </div>
+
+            </div>
+            <div class="row mt-3">
+                <div class="col">
+                    <button onclick="CreateInvoice()" class="btn btn-primary">Update invoice</button>
+                    <a asp-controller="Invoice" asp-action="Index" class="btn btn-secondary">Return to list</a>
                 </div>
             </div>
         </div>
-
-        <div class="row mb-3">
-            <div class="col-md-12 table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th scope="col">Nazwa produktu</th>
-                            <th scope="col">Cena netto</th>
-                            <th scope="col">Cena brutto</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach(var obj in Model.Products)
-                        {
-                            <tr>
-                                <td>
-                                    @obj.Name
-                                </td>
-                                 <td>
-                                    @obj.NetPrice
-                                </td>
-                                <td>
-                                    @obj.GrossPrice
-                                </td>
-                                <td>
-                                    <div class="w-75 btn-group" role="group">
-                                        <a onclick="DeleteProduct()" style="width:60px" class="btn btn-danger mx-0"><i class="bi bi-pencil-square"></i>Usuń</a>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-        <a asp-controller="Invoice" asp-action="AddProductToInvoice" class="btn btn-secondary" style="width:200px">Dodaj produkt do faktury</a>
-        <br />
-        <br />
-        <br />
-
-        <button type="submit" class="btn btn-primary" style="width:180px">Zaktualizuj fakturę</button>
-        <a asp-controller="Invoice" asp-action="Index" class="btn btn-secondary" style="width:180px">Wróć do listy faktur</a>
     </div>
-</form>
+    <div class="col-sm-1"></div>
+</div>
+
 
 @section Scripts{
-    @{
     <partial name="_ValidationScriptsPartial" />
-    }
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>  
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script type="text/javascript">  
+        var rowId = 0;
+        var productList = @Json.Serialize(ViewBag.ProductList);
+        var taxesList = @Json.Serialize(ViewBag.TaxTypes);
+        var productsOnInvoice = @Json.Serialize(Model.Products);
+        var quantityUnits = @Json.Serialize(ViewBag.QuantityUnits);
+
+        $(document).ready(function() {
+            $.each(productsOnInvoice, function(i, item) {
+                AddItem(item);
+            });         
+        });
+
+        function DeleteRow(id) {
+            $("#"+id).hide();
+        }
+
+        function EnableSelect2() {           
+            $('.product').select2({
+                theme: "bootstrap-5",
+                width: 'style',
+                tags: true
+            });
+        }
+
+        function AddItem(item) {
+            var prod = "";
+            if (item != null) {
+                prod = item
+            } else {
+                prod = {
+                    quantity : "",
+                    netPrice : ""
+                }
+            }
+            var html = '<div class="row m-0 p-0 mt-3" id="'+rowId+'"><div class="col-sm-5"><select onchange="GetProductDetail('+rowId+')" id="product_'+rowId+'" class="product w-100" name="state"><option selected="selected"></option></select></div><div class="col-sm-1"><input value="'+prod.quantity+'" id="quantity_'+rowId+'" onchange="UpdateTotalPrice('+rowId+')" autocomplete="off" class="form-control"></input></div><div class="col-sm-1 "><select id="quantityUnit_'+rowId+'" class="form-select"><option selected="selected"></option><option value="szt">szt</option><option value="godz">godz</option><option value="dni">dni</option></select></div><div class="col-sm-1"><input id="netPrice_'+rowId+'" value="'+prod.netPrice+'" onchange="UpdateTotalPrice('+rowId+')" autocomplete="off" class="form-control" /></div><div class="col-sm-1"><select id="tax_'+rowId+'" onchange="UpdateTotalPrice('+rowId+')" class="form-select"></select></div><div class="col-sm-1"><input id="totalNet_'+rowId+'" autocomplete="off" class="form-control" /></div><div class="col-sm-1"><input id="totalGross_'+rowId+'" autocomplete="off" class="form-control" /></div><div class="col-sm-1" ><a onclick="DeleteRow('+rowId+')" style="font-size: 2rem; color: red;vertical-align: top; cursor: pointer" title="Delete entry"><i class="bi bi-x-square-fill"></i></a></div></div>';
+                        
+            var productContainer = document.getElementById("productContainer");
+            $('#productContainer').append(html);
+            EnableSelect2();
+                       
+            $.each(JSON.parse(productList), function(i, item) {
+                var isSelected = false;
+                if (prod.productId == item.Id) {
+                    isSelected = true;
+                }
+                var newOption = new Option(item.Name, item.Id, false, isSelected);
+                $('#product_'+rowId).append(newOption);
+
+            });    
+
+            $.each(JSON.parse(taxesList), function (i, item) {
+                var isSelected = false;
+
+                if (prod.tax == item.Tax) {
+                    isSelected = true;
+                }
+                var newOption = new Option(item.Tax, item.Tax, false, isSelected);
+                $('#tax_'+rowId).append(newOption).trigger('change');
+            });
+
+            $.each(JSON.parse(quantityUnits), function(i, item) {
+                var isSelected = false;
+                if (prod.quantityUnit == item) {
+                    isSelected = true;
+                }
+                var newOption = new Option(item, item, false, isSelected);
+                $('#quantityUnit_'+rowId).append(newOption).trigger('change');
+            });
+
+            rowId += 1;         
+        }
+
+        function GetProductDetail(id) {
+            var productId = $("#product_"+id).find(":selected").val();
+                           
+            var productList = @Json.Serialize(ViewBag.ProductList);
+            $.each(JSON.parse(productList), function(i, item) {
+                if (productId != "") {
+                    if (item.Id == productId) {
+                        $("#netPrice_" + id).val(item.NetPrice);
+                        $("#tax_" + id).val(item.Tax);
+                        $("#quantity_" + id).val("1");
+                        $("#quantityUnit_" + id).val(item.QuantityUnit);
+                        UpdateTotalPrice(id);
+                    }
+                }
+                else
+                {
+                    $("#netPrice_" + id).val("");
+                    $("#tax_" + id).val("");
+                }
+            });                        
+        }
+
+        function UpdateBuyer() {
+            
+            var contractorId = $("#contractorId").val();
+
+            if (contractorId != "" && contractorId != null && contractorId != 0) {
+                $.ajax({ 
+                    type: 'POST',
+                    cache: false,
+                    url: '/Invoice/UpdateContractor?contractorId='+ contractorId, 
+                    dataType: 'json', 
+                    contentType: 'application/json',               
+                    success: function (contractor) { 
+                        $.each(contractor, function(k, v) { 
+                            if (k != null && k != "") {
+                                if (v != null && v != "") {
+                                    $("#" +k).val(v);
+                                }
+                            }
+                        });                  
+                    },
+                    error: function() {
+
+                    }
+                });
+            }
+        }
+
+        function UpdateTotalPrice(id){
+            var quantity = parseInt($("#quantity_" + id).val());
+            var netPrice = parseFloat($("#netPrice_" + id).val());
+            var tax = parseInt($("#tax_" + id).val());
+
+            if((quantity != 0 && !Number.isNaN(quantity)) && (netPrice != 0 && !Number.isNaN(netPrice)) && (tax != 0 && !Number.isNaN(tax))){
+                var totalNet = quantity * netPrice;
+                var totalGross = totalNet + (totalNet * (tax / 100));
+
+                $("#totalNet_" + id).val(totalNet);
+                $("#totalGross_" + id).val(totalGross);
+            }
+        }
+
+        function CreateInvoice(){
+            var listOfProducts = [];
+
+            $('#productContainer').children().each(function() {
+                var id = $(this).attr('id');
+
+                var display = document.getElementById(id).style.display;
+                if (display != "none") {
+                    var product = {
+                        id: $("#product_" + id).val(),
+                        netPrice: $("#netPrice_" + id).val(),
+                        totalNet: $("#totalNet_" + id).val(),
+                        totalGross: $("#totalGross_" + id).val(),
+                        quantity: $("#quantity_" + id).val(),
+                        quantityUnit: $("#quantityUnit_" + id).val(),
+                        tax: $("#tax_" + id).val(),
+                    };
+
+                    listOfProducts.push(product);
+                }
+            });  
+            var invoiceId = @Model.Id;
+
+            var invoice = {
+                id : invoiceId,
+                invoiceTypeId : $("#invoiceTypeId").val(),
+                number : $("#invoiceNumber").val(),
+                saleDate : $("#saleDate").val(),
+                creationDate : $("#creationDate").val(),
+                contractorId : $("#contractorId").val(),
+                products : listOfProducts
+            }
+            
+            if (listOfProducts.length != 0) {
+                $.ajax({
+                    type: 'POST',
+                    dataType: 'JSON',
+                    url: '/Invoice/Edit',
+                    data: { invoice: JSON.stringify(invoice) },
+                    success: function(response) {
+                        window.location.href = response.redirectToUrl;
+                    }
+                });
+            }
+        }
+    </script>
 }

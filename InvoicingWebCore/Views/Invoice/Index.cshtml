@@ -23,17 +23,18 @@
                             <th scope="col">Sale date</th>
                             <th scope="col"></th>  
                             <th scope="col"></th> 
+                            <th scope="col"></th> 
                         </tr>
                     </thead>
                     <tbody>
                         @foreach(var obj in Model)
                         {
-                            <tr @*onclick="location.href = '@(Url.Action("Index", "InvoiceDetails", @obj))'"*@>
+                            <tr>
                                 <td>
                                     @obj.Number
                                 </td>
                                  <td>
-                                    @obj.InvoiceTypeId
+                                    @obj.InvoiceType.Name
                                 </td>
                                 <td>
                                     @obj.CreationDate
@@ -41,6 +42,11 @@
                                 <td>
                                     @obj.SaleDate
                                 </td>
+                                <td>
+                                    <div class="w-75 btn-group" role="group">
+                                        <a asp-controller="Invoice" asp-action="Print" asp-route-id="@obj.Id" class="btn btn-primary mx-0"><i class="bi bi-pencil-square"></i>Edit</a>
+                                    </div>
+                                </td>                               
                                 <td>
                                     <div class="w-75 btn-group" role="group">
                                         <a asp-controller="Invoice" asp-action="Edit" asp-route-id="@obj.Id" class="btn btn-primary mx-0"><i class="bi bi-pencil-square"></i>Edit</a>

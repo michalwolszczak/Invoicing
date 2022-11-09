@@ -18,6 +18,8 @@
                     <thead>
                         <tr>
                             <th scope="col">Contractor name</th>
+                            <th scope="col">First name</th>
+                            <th scope="col">Last name</th>
                             <th scope="col">KRS</th>
                             <th scope="col">Regon</th>
                             <th scope="col">NIP</th>
@@ -28,9 +30,15 @@
                     <tbody>
                         @foreach(var obj in Model)
                         {
-                            <tr @*onclick="location.href = '@(Url.Action("Index", "InvoiceDetails", @obj))'"*@>
+                            <tr>
                                 <td>
                                     @obj.Name
+                                </td>
+                                <td>
+                                    @obj.FirstName
+                                </td>
+                                <td>
+                                    @obj.LastName
                                 </td>
                                  <td>
                                     @obj.KRS
