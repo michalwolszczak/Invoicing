@@ -18,7 +18,7 @@ namespace InvoicingWebCore.Services
         {
             try
             {
-                return _db.Users.Include(c => c.Company).FirstOrDefault(x => x.Id == userId);                
+                return _db.Users.FirstOrDefault(x => x.Id == userId);                
             }
             catch (Exception ex)
             {

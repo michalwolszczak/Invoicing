@@ -3,6 +3,7 @@ using InvoicingWebCore.Interfaces;
 using InvoicingWebCore.Models;
 using InvoicingWebCore.ViewModel;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 
 namespace InvoicingWebCore.Services
 {
@@ -23,6 +24,7 @@ namespace InvoicingWebCore.Services
             //_userService = userService;
             //_databaseService = databaseService;
             _db = db;
+
             //_logger = logger;
         }
 
@@ -34,7 +36,7 @@ namespace InvoicingWebCore.Services
         //        if(invoiceModel != null)
         //        {
         //            var invoice = _invoiceService.Create(invoiceModel, user);
-                    
+
         //            _db.Invoices.Add(invoice);
         //            _db.SaveChanges();
 

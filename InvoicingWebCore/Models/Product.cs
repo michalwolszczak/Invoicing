@@ -23,7 +23,7 @@ namespace InvoicingWebCore.Models
         public string? QuantityUnit { get; set; }
         [JsonIgnore]
         public List<InvoiceProduct>? Invoices { get; set; } = new List<InvoiceProduct>();
-        [JsonIgnore]
-        public Company Company { get; set; }
+        //[JsonIgnore]
+        //public Company Company { get; set; }
     }
 }

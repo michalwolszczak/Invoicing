@@ -7,14 +7,14 @@ namespace InvoicingWebCore.Models
     public class Company
     {
         public int Id { get; set; }
-        [ForeignKey("User")]
-        public string UserId { get; set; }
-        [JsonIgnore]
-        public ApplicationUser? User { get; set; }
-        [Required]
-        public List<Invoice>? Invoices { get; set; } = new List<Invoice>();
-        public List<Product>? Products { get; set; } = new List<Product>();
-        public List<Contractor>? Contractor { get; set; } = new List<Contractor>();        
+        //[ForeignKey("User")]
+        //public string UserId { get; set; }
+        //[JsonIgnore]
+        //public ApplicationUser? User { get; set; }
+        //[Required]
+        //public List<Invoice>? Invoices { get; set; } = new List<Invoice>();
+        //public List<Product>? Products { get; set; } = new List<Product>();
+        //public List<Contractor>? Contractor { get; set; } = new List<Contractor>();        
         [Required]
         public string Name { get; set; }
         public string? FirstName { get; set; }

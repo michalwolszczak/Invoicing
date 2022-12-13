@@ -24,7 +24,7 @@ namespace InvoicingWebCore.Controllers
             return View(companies);
         }        
 
-        [HttpGet]
+        [HttpGet]        
         public IActionResult Create()
         {
             return View();
@@ -40,7 +40,6 @@ namespace InvoicingWebCore.Controllers
             {
                 company.MonthMumber = DateTime.Now.Month;
                 company.InvoiceNumberCounter = 0;
-                company.User = user;
 
                 _db.Companies.Add(company);
                 _db.SaveChanges();
@@ -51,14 +50,15 @@ namespace InvoicingWebCore.Controllers
         public IActionResult Edit()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = _db.Users.Include(c => c.Company).FirstOrDefault(x => x.Id == userId);
+            var user = _db.Users.FirstOrDefault(x => x.Id == userId);
 
-            if (user.Company == null)
+            if (user == null)
             {
                 return NotFound();
             }
+            var company = _db.Companies.First();
 
-            return View(user.Company);
+            return View(company);
         }
 
         //post

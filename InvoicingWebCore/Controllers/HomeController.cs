@@ -1,5 +1,6 @@
 ﻿using InvoicingWebCore.Data;
 using InvoicingWebCore.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Security.Claims;
@@ -18,9 +19,7 @@ namespace InvoicingWebCore.Controllers
 
         public IActionResult Index()
         {
-            //var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //var user = _db.Users.Find(userId);
-
+            AddUserIdToSession();
             return View();
         }
 
@@ -33,6 +32,15 @@ namespace InvoicingWebCore.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private void AddUserIdToSession()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                HttpContext.Session.SetString("USER_ID", User.FindFirstValue(ClaimTypes.NameIdentifier));
+            }
         }
     }
 }

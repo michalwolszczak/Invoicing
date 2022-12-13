@@ -17,7 +17,6 @@ namespace InvoicingWebCore.Controllers
     public class InvoiceController : Controller
     {
         private readonly ApplicationDbContext _db;
-        private ApplicationUser _loggedUser;
         private readonly ILogger _logger;
         private readonly IInvoiceService _invoiceService;
         private readonly IUserService _userService;
@@ -36,87 +35,45 @@ namespace InvoicingWebCore.Controllers
         }
         public IActionResult Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);            
-            _loggedUser = _userService.GetLoggedUser(userId);
-
-            var invoices = _invoiceService.GetAll(_loggedUser);            
+            var invoices = _invoiceService.GetAll();            
             return View(invoices);
         }
 
         public IActionResult GetProducts()
         {
-            var products = _itemService.GetAll(_loggedUser);            
+            var products = _itemService.GetAll();            
             return Json(products);
         }
 
         //get
         public IActionResult Create()
         {
-            try
-            {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                _loggedUser = _userService.GetLoggedUser(userId);
+            ViewBag.InvoiceTypeList = new SelectList(_invoiceService.GetInvoiceTypes(), "Id", "Name");
+            ViewBag.ContractorList = new SelectList(_contractorService.GetAll(), "Id", "Name");
+            ViewBag.ProductList = JsonSerializer.Serialize(_itemService.GetAll());
+            ViewBag.TaxTypes = JsonSerializer.Serialize(_invoiceService.GetTaxTypes());
+            ViewBag.QuantityUnits = JsonSerializer.Serialize(Invoice.QuantityUnitList);
+            ViewBag.Company = _db.Companies.First();
 
-                if(_loggedUser != null)
-                {
-                    ViewBag.InvoiceTypeList = new SelectList(_invoiceService.GetInvoiceTypes(), "Id", "Name");
-                    ViewBag.ContractorList = new SelectList(_contractorService.GetAll(_loggedUser), "Id", "Name");
-                    ViewBag.ProductList = JsonSerializer.Serialize(_itemService.GetAll(_loggedUser));
-                    ViewBag.TaxTypes = JsonSerializer.Serialize(_invoiceService.GetTaxTypes());
-                    ViewBag.QuantityUnits = JsonSerializer.Serialize(Invoice.QuantityUnitList);
-                    ViewBag.Company = _loggedUser.Company;
+            ViewData["InvoiceNumber"] = _invoiceService.GetInvoiceNumber();
 
-                    ViewData["InvoiceNumber"] = _invoiceService.GetInvoiceNumber(_loggedUser);
-                    
-                    return View();
-                }
-                
-                TempData["error"] = "The user in not logged in";
-                return RedirectToAction("Login", "Account");
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        [HttpPost]
-        public JsonResult UpdateContractor(int contractorId)
-        {
-            var contractor = _contractorService.Update(contractorId);
-            return Json(contractor);
+            return View();
         }
 
         //post
         [HttpPost]
         public IActionResult Create(string invoice = "")
         {
-            try
+            if (_invoiceService.Create(invoice))
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                _loggedUser = _userService.GetLoggedUser(userId);
-
-                if (_loggedUser != null)
-                {                                        
-                    if(_invoiceService.Create(invoice, _loggedUser))
-                    {
-                        TempData["success"] = "The invoice has been created";
-                        return Json(new { redirectToUrl = Url.Action("Index", "Invoice") });
-                    }
-                    else
-                    {
-                        TempData["error"] = "Sorry, an unexpected error has occurred.";
-                        return RedirectToAction("Index", "Invoice");
-                    }
-                }
-                TempData["error"] = "The user in not logged in";
-                return RedirectToAction("Login", "Account");
+                TempData["success"] = "The invoice has been created";
+               return Json(new { redirectToUrl = Url.Action("Index", "Invoice") });
             }
-            catch (Exception ex)
+            else
             {
-                _logger.LogError(ex, "Cannot create invoice");
-                throw;
+                TempData["error"] = "Sorry, an unexpected error has occurred.";             
             }
+            return RedirectToAction("Index", "Invoice");
         }
 
         //get
@@ -127,84 +84,54 @@ namespace InvoicingWebCore.Controllers
                 return NotFound();
             }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            _loggedUser = _userService.GetLoggedUser(userId);
+            var invoice = _invoiceService.Get(id);
 
-            if (_loggedUser != null)
+            if (invoice == null)
             {
-                ViewBag.InvoiceTypeList = new SelectList(_invoiceService.GetInvoiceTypes(), "Id", "Name");
-                ViewBag.ContractorList = new SelectList(_contractorService.GetAll(_loggedUser), "Id", "Name");
-                ViewBag.ProductList = JsonSerializer.Serialize(_itemService.GetAll(_loggedUser));
-                ViewBag.TaxTypes = JsonSerializer.Serialize(_invoiceService.GetTaxTypes());
-                ViewBag.QuantityUnits = JsonSerializer.Serialize(Invoice.QuantityUnitList);
-
-                var invoice = _invoiceService.Get(id);
-
-                if (invoice == null)
-                {
-                    return NotFound();
-                }
-
-                return View(invoice);
+                return NotFound();
             }
-            TempData["error"] = "Raczej nie możliwe, że to się stało";
-            return NotFound();
+
+            ViewBag.InvoiceTypeList = new SelectList(_invoiceService.GetInvoiceTypes(), "Id", "Name");
+            ViewBag.ContractorList = new SelectList(_contractorService.GetAll(), "Id", "Name");
+            ViewBag.ProductList = JsonSerializer.Serialize(_itemService.GetAll());
+            ViewBag.TaxTypes = JsonSerializer.Serialize(_invoiceService.GetTaxTypes());
+            ViewBag.QuantityUnits = JsonSerializer.Serialize(Invoice.QuantityUnitList);
+            ViewBag.Company = _db.Companies.First();
+
+            return View(invoice);
         }
 
         //post
-        [HttpPost]        
+        [HttpPost]
         public IActionResult Edit(string invoiceJson = "")
         {
-            try
+            var invoice = Newtonsoft.Json.JsonConvert.DeserializeObject<Invoice>(invoiceJson);
+
+            if (_invoiceService.Update(invoice))
             {
-                var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                _loggedUser = _userService.GetLoggedUser(userId);
-
-                if (_loggedUser != null)
-                {
-                    var invoice = Newtonsoft.Json.JsonConvert.DeserializeObject<Invoice>(invoiceJson);
-
-                    if (_invoiceService.Update(invoice, _loggedUser))
-                    {
-                        TempData["success"] = "The invoice has been modified";
-                        return Json(new { redirectToUrl = Url.Action("Index", "Invoice") });
-                    }
-
-                    TempData["error"] = "Cannot read the json file";
-                    return NotFound();
-                }
-                TempData["error"] = "The user in not logged in";
-                return RedirectToAction("Login", "Account");
+                TempData["success"] = "The invoice has been modified";
             }
-            catch (Exception)
+            else
             {
-                throw;
-            }
+                TempData["error"] = "Something went wrong while modified invoice";
+            }            
+            return RedirectToAction("Index", "Invoice");
         }
 
         public IActionResult Print(int id)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = _db.Users.Include(c => c.Company).FirstOrDefault(x => x.Id == userId);
+            var invoice = _db.Invoices
+                .Include(x => x.InvoiceType)
+                .Include(x => x.Products).ThenInclude(p => p.Product)
+                .Include(x => x.Contractor)
+                .FirstOrDefault(x => x.Id == id);
 
-            if(user != null)
+            if (invoice != null)
             {
-                var invoice = _db.Invoices
-                    .Include(x => x.InvoiceType)
-                    .Include(x => x.Products).ThenInclude(p => p.Product)
-                    .Include(x => x.Company)
-                    .Include(x => x.Contractor)
-                    .FirstOrDefault(x => x.Id == id);
-                
-                if(invoice != null)
-                {
-                    return View(invoice);
-                }
-                TempData["error"] = "Cannot find invoice";
-                return RedirectToAction("Index", "Invoice");
+                return View(invoice);
             }
-            TempData["error"] = "The user in not logged in";
-            return RedirectToAction("Login", "Account");            
+            TempData["error"] = "Cannot find invoice";
+            return RedirectToAction("Index", "Invoice");
         }
 
         //get
@@ -218,10 +145,12 @@ namespace InvoicingWebCore.Controllers
             if (_invoiceService.Delete(id))
             {
                 TempData["success"] = "Invoice has been deleted";
-                return RedirectToAction("Index");
             }
-
-            TempData["error"] = "Invoice has not been deleted";
+            else
+            {
+                TempData["error"] = "Invoice has not been deleted";
+            }
+            
             return RedirectToAction("Index");
         }
     }

@@ -87,7 +87,7 @@ function UpdateBuyer() {
         $.ajax({
             type: 'POST',
             cache: false,
-            url: '/Invoice/UpdateContractor?contractorId=' + contractorId,
+            url: '/Contractor/Get?contractorId=' + contractorId,
             dataType: 'json',
             contentType: 'application/json',
             success: function (contractor) {
@@ -157,7 +157,7 @@ function CreateInvoice() {
             url: '/Invoice/Create',
             data: { invoice: JSON.stringify(invoice) },
             success: function (response) {
-                window.location.href = response.redirectToUrl;
+                //window.location.href = response.redirectToUrl;
             }
         });
     }

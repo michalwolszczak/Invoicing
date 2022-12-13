@@ -15,7 +15,7 @@ namespace InvoicingWebCore.Services
             _db = db;
         }
 
-        public bool Create(string model, ApplicationUser loggedUser)
+        public bool Create(string model)
         {
             try
             {
@@ -24,8 +24,8 @@ namespace InvoicingWebCore.Services
                 {
                     Invoice invoice = new Invoice(invoiceModel);
 
-                    invoice.Company = loggedUser.Company;
-                    UpdateCompanyInvoiceNumber(loggedUser, invoice.Number);
+                    //invoice.Company = loggedUser.Company;
+                    UpdateCompanyInvoiceNumber(invoice.Number);
 
 
 
@@ -61,23 +61,23 @@ namespace InvoicingWebCore.Services
             return true;
         }
 
-        public bool Update(Invoice invoice, ApplicationUser loggedUser)
+        public bool Update(Invoice invoice)
         {
             if (invoice != null)
             {
                 string number = invoice.Number;
+                var company = _db.Companies.First();
 
                 Invoice inv = _db.Invoices.Find(invoice.Id);
                 if (inv != null)
                 {
-                    inv.Company = loggedUser.Company;
                     inv.ContractorId = invoice.ContractorId;
                     inv.CreationDate = invoice.CreationDate;
                     inv.SaleDate = invoice.SaleDate;
                     inv.InvoiceTypeId = invoice.InvoiceTypeId;
                     inv.Number = number;
 
-                    loggedUser.Company.MonthMumber = DateTime.Now.Month;
+                    company.MonthMumber = DateTime.Now.Month;
                     //user.Company.InvoiceNumberCounter = int.Parse(number.Substring(0, number.IndexOf('/')));
                     _db.Invoices.Update(inv);
 
@@ -110,10 +110,15 @@ namespace InvoicingWebCore.Services
             return false;
         }
 
-        private void UpdateCompanyInvoiceNumber(ApplicationUser loggedUser, string invoiceNumber)
+        private void UpdateCompanyInvoiceNumber(string invoiceNumber)
         {
-            loggedUser.Company.MonthMumber = DateTime.Now.Month;
-            loggedUser.Company.InvoiceNumberCounter = int.Parse(invoiceNumber.Substring(0, invoiceNumber.IndexOf('/')));
+            var company = _db.Companies.First();
+            
+            company.MonthMumber = DateTime.Now.Month;
+            company.InvoiceNumberCounter = int.Parse(invoiceNumber.Substring(0, invoiceNumber.IndexOf('/')));
+
+            _db.Companies.Update(company);
+            _db.SaveChanges();
         }
 
         public void CreateInvoiceProducts(List<InvoiceProduct> invoiceProducts, int invoiceId)
@@ -136,24 +141,26 @@ namespace InvoicingWebCore.Services
             _db.SaveChanges();
         }
 
-        public IEnumerable<Invoice> GetAll(ApplicationUser loggedUser)
+        public IEnumerable<Invoice> GetAll()
         {
-            return _db.Invoices.Where(x => x.Company == loggedUser.Company).Include(it => it.InvoiceType).ToList();
+            return _db.Invoices.Include(it => it.InvoiceType).ToList();
         }
 
-        public string GetInvoiceNumber(ApplicationUser loggedUser)
+        public string GetInvoiceNumber()
         {
-            if (loggedUser.Company.MonthMumber < DateTime.Now.Month)
+            var company = _db.Companies.First();
+
+            if (company.MonthMumber < DateTime.Now.Month)
             {
-                loggedUser.Company.MonthMumber = DateTime.Now.Month;
-                loggedUser.Company.InvoiceNumberCounter = 1;
+                company.MonthMumber = DateTime.Now.Month;
+                company.InvoiceNumberCounter = 1;
             }
             else
             {
-                loggedUser.Company.InvoiceNumberCounter += 1;
+                company.InvoiceNumberCounter += 1;
             }
 
-            return loggedUser.Company.InvoiceNumberCounter + "/" + loggedUser.Company.MonthMumber + "/" + DateTime.Now.Year;
+            return company.InvoiceNumberCounter + "/" + company.MonthMumber + "/" + DateTime.Now.Year;
         }
 
         public IEnumerable<InvoiceType> GetInvoiceTypes()
@@ -170,7 +177,6 @@ namespace InvoicingWebCore.Services
         {
             return _db.Invoices
                     .Include(p => p.Products).ThenInclude(p => p.Product)
-                    .Include(c => c.Company)
                     .Include(c => c.Contractor)
                     .FirstOrDefault(x => x.Id == invoiceId);
         }

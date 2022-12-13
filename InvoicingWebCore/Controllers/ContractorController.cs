@@ -1,5 +1,7 @@
 ﻿using InvoicingWebCore.Data;
+using InvoicingWebCore.Interfaces;
 using InvoicingWebCore.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -7,22 +9,31 @@ using System.Security.Claims;
 
 namespace InvoicingWebCore.Controllers
 {
+    [Authorize]
     public class ContractorController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        private readonly IContractorService _contractorService;
+        private readonly ILogger _logger;
 
-        public ContractorController(ApplicationDbContext db)
+        public ContractorController(IContractorService contractorService, ILogger<ContractorController> logger)
         {
-            _db = db;
+            _contractorService = contractorService;
+            _logger = logger;
         }
 
         public IActionResult Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = _db.Users.Include(c => c.Company).FirstOrDefault(x => x.Id == userId);
+            try
+            {
+                var contractors = _contractorService.GetAll();
 
-            IEnumerable<Contractor> contractors = _db.Contractors.Where(x => x.Company == user.Company).ToList();            
-            return View(contractors);
+                return View(contractors);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error has occurred. Please try again");
+                throw;
+            }            
         }
 
         //get
@@ -35,36 +46,30 @@ namespace InvoicingWebCore.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(Contractor contractor)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = _db.Users.Include(c => c.Company).FirstOrDefault(x => x.Id == userId);
-            if(user != null)
+            if (ModelState.IsValid)
             {
-                ModelState.Remove("Company");
-                ModelState.Remove("CompanyId");
-                if (ModelState.IsValid)
+                if (_contractorService.Create(contractor))
                 {
-                    contractor.Company = user.Company;
-                    _db.Contractors.Add(contractor);
-                    _db.SaveChanges();
-
                     TempData["success"] = "A new contractor has been added";
                     return RedirectToAction("Index");
                 }
-                TempData["error"] = "Something went wrong";
-                return View(contractor);
             }
-            TempData["error"] = "The user in not logged in";
-            return RedirectToAction("Login", "Account");
+
+            TempData["error"] = "Something went wrong";
+            _logger.LogError("Model is invalid", ModelState.Values.Select(x => x.Errors));
+
+            return View(contractor);
         }
 
         //get
-        public IActionResult Edit(int? id)
+        public IActionResult Edit(int id)
         {
-            if (id == null || id == 0)
+            if (id == 0)
             {
                 return NotFound();
             }
-            Contractor contractor = _db.Contractors.Find(id);
+
+            var contractor = _contractorService.Get(id);
 
             if (contractor == null)
             {
@@ -77,36 +82,55 @@ namespace InvoicingWebCore.Controllers
         //post
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Contractor obj)
+        public IActionResult Edit(Contractor model)
         {
-            ModelState.Remove("Company");
             if (ModelState.IsValid)
             {
-                _db.Contractors.Update(obj);
-                _db.SaveChanges();
+                _contractorService.Update(model);
+
                 TempData["success"] = "Contractor has been updated";
                 return RedirectToAction("Index");
             }
-            return View(obj);
+
+            _logger.LogError("Model is invalid", ModelState.Values.Select(x => x.Errors));
+            return View(model);
         }
+
         //get
-        public IActionResult Delete(int? id)
+        public IActionResult Delete(int id)
         {
-            if (id == null || id == 0)
+            try
             {
-                return NotFound();
-            }
-            Contractor contractor = _db.Contractors.Find(id);
+                if (id == 0)
+                {
+                    return NotFound();
+                }
 
-            if (contractor == null)
+                if (_contractorService.Delete(id))
+                {
+                    TempData["success"] = "Contractor has been deleted";
+                }
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
             {
-                return NotFound();
+                _logger.LogError(ex, "Unexpected error has occurred");
+                throw;
             }
+        }
 
-            _db.Contractors.Remove(contractor);
-            _db.SaveChanges();
-            TempData["success"] = "Contractor has been deleted";
-            return RedirectToAction("Index");
+        [HttpPost]
+        public JsonResult Get(int contractorId)
+        {
+            try
+            {
+                return Json(_contractorService.Get(contractorId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error has occurred");
+                throw;
+            }            
         }
     }
 }

@@ -19,10 +19,7 @@ namespace InvoicingWebCore.Controllers
         }
         public IActionResult Index()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = _db.Users.Include(c => c.Company).FirstOrDefault(x => x.Id == userId);
-
-            IEnumerable<Product> products = _db.Products.Where(x => x.Company == user.Company).ToList();
+            IEnumerable<Product> products = _db.Products.ToList();
             return View(products);
         }
 
@@ -39,7 +36,7 @@ namespace InvoicingWebCore.Controllers
         public IActionResult Create(Product product)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = _db.Users.Include(c => c.Company).FirstOrDefault(x => x.Id == userId);
+            var user = _db.Users.FirstOrDefault(x => x.Id == userId);
 
             if(user != null)
             {
@@ -47,7 +44,6 @@ namespace InvoicingWebCore.Controllers
                 ModelState.Remove("Invoices");
                 if (ModelState.IsValid)
                 {
-                    product.Company = user.Company;
                     _db.Products.Add(product);
                     _db.SaveChanges();
                     TempData["success"] = "A new product has been added";

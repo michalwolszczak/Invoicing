@@ -4,9 +4,10 @@ namespace InvoicingWebCore.Interfaces
 {
     public interface IContractorService
     {
-        Contractor Create();
-        Contractor Update(int contractorId);
+        bool Create(Contractor model);
+        void Update(Contractor model);
+        bool Delete(int contractorId);
         Contractor Get(int contractorId);
-        IEnumerable<Contractor> GetAll(ApplicationUser loggedUser);
+        IEnumerable<Contractor> GetAll();
     }
 }

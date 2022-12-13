@@ -1,13 +1,12 @@
 using InvoicingWebCore.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using InvoicingWebCore.Models;
-using InvoicingWebCore;
-using System.Globalization;
-using Microsoft.AspNetCore.Localization;
-using InvoicingWebCore.Services;
 using InvoicingWebCore.Interfaces;
-using Microsoft.Extensions.Logging;
+using InvoicingWebCore.Middleware;
+using InvoicingWebCore.Models;
+using InvoicingWebCore.Services;
+using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
+using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,14 +34,18 @@ builder.Services
 
 builder.Services.AddRazorPages();
 
-builder.Services.AddTransient<IItemService, ItemService>();
-builder.Services.AddTransient<IContractorService, ContractorService>();
-builder.Services.AddTransient<IInvoiceService, InvoiceService>();
-builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IDatabaseService, DatabaseService>();
-builder.Services.AddLogging();
+builder.Services.AddScoped<IItemService, ItemService>();
+builder.Services.AddScoped<IContractorService, ContractorService>();
+builder.Services.AddScoped<IInvoiceService, InvoiceService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDatabaseService, DatabaseService>();
+builder.Services.AddScoped<ErrorHandlingMiddleware>();
 
+builder.Services.AddHttpContextAccessor();
+//builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>(); ;
 builder.Services.AddSession(s => s.IdleTimeout = TimeSpan.FromMinutes(60));
+
+builder.Logging.AddLog4Net("log4net.config");
 
 var app = builder.Build();
 
@@ -53,6 +56,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+
 
 var supportedCultures = new[]
 {
@@ -70,6 +75,9 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+//middleware
+app.UseMiddleware<ErrorHandlingMiddleware>();
 
 app.UseRouting();
 app.UseAuthentication();

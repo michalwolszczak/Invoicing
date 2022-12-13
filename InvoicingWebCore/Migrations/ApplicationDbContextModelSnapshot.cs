@@ -136,8 +136,7 @@ namespace InvoicingWebCore.Migrations
 
                     b.Property<string>("NIP")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -156,14 +155,7 @@ namespace InvoicingWebCore.Migrations
                         .HasMaxLength(9)
                         .HasColumnType("nvarchar(9)");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
 
                     b.ToTable("Companies");
                 });
@@ -184,9 +176,6 @@ namespace InvoicingWebCore.Migrations
 
                     b.Property<string>("City")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Country")
                         .HasColumnType("nvarchar(max)");
@@ -222,8 +211,6 @@ namespace InvoicingWebCore.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CompanyId");
-
                     b.ToTable("Contractors");
                 });
 
@@ -234,9 +221,6 @@ namespace InvoicingWebCore.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
 
                     b.Property<int?>("ContractorId")
                         .HasColumnType("int");
@@ -255,8 +239,6 @@ namespace InvoicingWebCore.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
 
                     b.HasIndex("ContractorId");
 
@@ -358,9 +340,6 @@ namespace InvoicingWebCore.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("CompanyId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -381,8 +360,6 @@ namespace InvoicingWebCore.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CompanyId");
 
                     b.ToTable("Products");
                 });
@@ -557,36 +534,8 @@ namespace InvoicingWebCore.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("InvoicingWebCore.Models.Company", b =>
-                {
-                    b.HasOne("InvoicingWebCore.Models.ApplicationUser", "User")
-                        .WithOne("Company")
-                        .HasForeignKey("InvoicingWebCore.Models.Company", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("InvoicingWebCore.Models.Contractor", b =>
-                {
-                    b.HasOne("InvoicingWebCore.Models.Company", "Company")
-                        .WithMany("Contractor")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
-                });
-
             modelBuilder.Entity("InvoicingWebCore.Models.Invoice", b =>
                 {
-                    b.HasOne("InvoicingWebCore.Models.Company", "Company")
-                        .WithMany("Invoices")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("InvoicingWebCore.Models.Contractor", "Contractor")
                         .WithMany("Invoices")
                         .HasForeignKey("ContractorId");
@@ -596,8 +545,6 @@ namespace InvoicingWebCore.Migrations
                         .HasForeignKey("InvoiceTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Company");
 
                     b.Navigation("Contractor");
 
@@ -617,17 +564,6 @@ namespace InvoicingWebCore.Migrations
                     b.Navigation("Invoice");
 
                     b.Navigation("Product");
-                });
-
-            modelBuilder.Entity("InvoicingWebCore.Models.Product", b =>
-                {
-                    b.HasOne("InvoicingWebCore.Models.Company", "Company")
-                        .WithMany("Products")
-                        .HasForeignKey("CompanyId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Company");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -679,21 +615,6 @@ namespace InvoicingWebCore.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("InvoicingWebCore.Models.ApplicationUser", b =>
-                {
-                    b.Navigation("Company")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("InvoicingWebCore.Models.Company", b =>
-                {
-                    b.Navigation("Contractor");
-
-                    b.Navigation("Invoices");
-
-                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("InvoicingWebCore.Models.Contractor", b =>

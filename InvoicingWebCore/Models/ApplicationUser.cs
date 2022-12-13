@@ -8,7 +8,7 @@ namespace InvoicingWebCore.Models
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
-        public Company Company { get; set; }
+        //public Company Company { get; set; }
         //public int? CurrentCompanySelected { get; set; }
     }
 }

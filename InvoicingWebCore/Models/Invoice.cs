@@ -17,9 +17,9 @@ namespace InvoicingWebCore.Models
         public int? ContractorId { get; set; }
         [JsonIgnore]
         public Contractor? Contractor { get; set; }
-        public int CompanyId { get; set; }
-        [JsonIgnore]
-        public Company? Company { get; set; }
+        //public int CompanyId { get; set; }
+        //[JsonIgnore]
+        //public Company? Company { get; set; }
         [Required]
         public string Number { get; set; }
         //[Required]

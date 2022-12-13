@@ -12,9 +12,9 @@ namespace InvoicingWebCore.Services
             _db = db;
         }
 
-        public IEnumerable<Product> GetAll(ApplicationUser loggedUser)
+        public IEnumerable<Product> GetAll()
         {
-            return _db.Products.Where(x => x.Company == loggedUser.Company).ToList();
+            return _db.Products.ToList();
         }
     }
 }

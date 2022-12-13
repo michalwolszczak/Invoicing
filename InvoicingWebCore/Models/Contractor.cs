@@ -8,10 +8,10 @@ namespace InvoicingWebCore.Models
     {
         public int Id { get; set; }
         public List<Invoice> Invoices { get; set; } = new List<Invoice>();
-        [ForeignKey("Company")]
-        public int CompanyId { get; set; }
-        [JsonIgnore]
-        public Company Company { get; set; }
+        //[ForeignKey("Company")]
+        //public int CompanyId { get; set; }
+        //[JsonIgnore]
+        //public Company Company { get; set; }
         [Required]
         public string Name { get; set; }
         [MaxLength(10)]
